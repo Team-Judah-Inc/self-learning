@@ -7,6 +7,7 @@ import (
 	"os"
 
 	"github.com/gorilla/mux"
+	"github.com/self-learning/backend/cmd/auth"
 )
 
 func main() {
@@ -16,15 +17,14 @@ func main() {
 	}
 
 	router := mux.NewRouter()
-	
+
 	// Health check endpoint
 	router.HandleFunc("/health", healthCheckHandler).Methods("GET")
-	
-	// API routes
-	api := router.PathPrefix("/api/v1").Subrouter()
-	api.HandleFunc("/", rootHandler).Methods("GET")
 
-	// CORS middleware
+	api := router.PathPrefix("/api/v1").Subrouter()
+	protectedApi := api.PathPrefix("/protected").Subrouter()
+	protectedApi.HandleFunc("/", rootHandler).Methods("GET")
+	protectedApi.Use(MiddleBasicAuth)
 	router.Use(corsMiddleware)
 
 	log.Printf("Server starting on port %s", port)
@@ -32,19 +32,16 @@ func main() {
 		log.Fatal(err)
 	}
 }
-
 func healthCheckHandler(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)
 	fmt.Fprintf(w, `{"status":"healthy"}`)
 }
-
 func rootHandler(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)
-	fmt.Fprintf(w, `{"message":"Welcome to Self-Learning API"}`)
+	fmt.Fprintf(w, `{"message":"Welcome to Self-Learning Protected API"}`)
 }
-
 func corsMiddleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Access-Control-Allow-Origin", "*")
@@ -55,7 +52,26 @@ func corsMiddleware(next http.Handler) http.Handler {
 			w.WriteHeader(http.StatusOK)
 			return
 		}
-
 		next.ServeHTTP(w, r)
 	})
+}
+func MiddleBasicAuth(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		username, password, ok := r.BasicAuth()
+		fmt.Println("MiddleBasicAuth")
+		if ok {
+			if auth.BasicAuth(auth.User{
+				Username: username,
+				Password: password,
+			}) {
+				fmt.Println("User successfully authenticated")
+				next.ServeHTTP(w, r)
+			} else {
+				fmt.Println("User authentication failed")
+				w.Header().Set("WWW-Authenticate", `Basic realm="Restricted"`)
+				http.Error(w, "Unauthorized", http.StatusUnauthorized)
+			}
+		}
+	})
+
 }
