@@ -8,24 +8,35 @@ import (
 
 	"github.com/gorilla/mux"
 	"github.com/self-learning/backend/cmd/auth"
+	"github.com/self-learning/backend/internal/database"
+	"github.com/self-learning/backend/internal/ingestion"
 )
 
 func main() {
+	// 1. Initialize Database
+	db := database.Connect("riseapp.db")
+
+	// 2. Create the internal Queue (Buffered Channel)
+	// This acts as the "Queue" between Fetcher and Normalizer
+	queue := make(chan ingestion.SyncJob, 100)
+
+	// 3. Start the Background Fetcher (The Engine)
+	go ingestion.StartFetcherLoop(db, queue)
+
+	// 4. Start the Real Normalizer (The Chef - Loop B)
+	go ingestion.StartNormalizerLoop(db, queue)
+
+	// 5. Start HTTP Server
 	port := os.Getenv("PORT")
 	if port == "" {
 		port = "8080"
 	}
 
 	router := mux.NewRouter()
-
-	// Health check endpoint
-	router.HandleFunc("/health", healthCheckHandler).Methods("GET")
-
-	api := router.PathPrefix("/api/v1").Subrouter()
-	protectedApi := api.PathPrefix("/protected").Subrouter()
-	protectedApi.HandleFunc("/", rootHandler).Methods("GET")
-	protectedApi.Use(MiddleBasicAuth)
-	router.Use(corsMiddleware)
+	router.HandleFunc("/health", func(w http.ResponseWriter, r *http.Request) {
+		w.WriteHeader(http.StatusOK)
+		w.Write([]byte(`{"status":"alive"}`))
+	})
 
 	log.Printf("Server starting on port %s", port)
 	if err := http.ListenAndServe(":"+port, router); err != nil {

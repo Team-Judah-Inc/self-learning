@@ -8,10 +8,29 @@ Thumbs.db
 
 # Dependencies
 node_modules/
+/backend/vendor/
 
-# Build outputs
+# Go Build Output
+/backend/bin/
+*.exe
+*.test
+*.out
+
+# Database (SQLite - CRITICAL)
+*.db
+*.db-journal
+*.db-wal
+*.db-smh
+
+# Environment Variables & Secrets
+.env
+
+# Build outputs (Frontend)
 dist/
 build/
 
 # Logs
 *.log
+
+# Local blob storage
+/storage/
