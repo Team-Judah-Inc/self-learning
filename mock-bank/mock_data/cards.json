@@ -1,0 +1,67 @@
+[
+  {
+    "card_id": "card_1",
+    "account_id": "acc_1",
+    "masked_number": "****-****-****-2557",
+    "status": "ACTIVE",
+    "limit": 5000,
+    "billing_day": 1,
+    "spending_profile": "SPENDER",
+    "current_spend": 2345.95,
+    "issue_date": "2025-01-01",
+    "expiry_date": "2028-01-01",
+    "last_bill_date": null
+  },
+  {
+    "card_id": "card_2",
+    "account_id": "acc_2",
+    "masked_number": "****-****-****-1613",
+    "status": "ACTIVE",
+    "limit": 5000,
+    "billing_day": 10,
+    "spending_profile": "FRUGAL",
+    "current_spend": 7.04,
+    "issue_date": "2025-01-01",
+    "expiry_date": "2028-01-01",
+    "last_bill_date": null
+  },
+  {
+    "card_id": "card_3",
+    "account_id": "acc_3",
+    "masked_number": "****-****-****-4201",
+    "status": "ACTIVE",
+    "limit": 5000,
+    "billing_day": 15,
+    "spending_profile": "AVERAGE",
+    "current_spend": 291.18,
+    "issue_date": "2025-01-01",
+    "expiry_date": "2028-01-01",
+    "last_bill_date": "2025-01-15"
+  },
+  {
+    "card_id": "card_4",
+    "account_id": "acc_4",
+    "masked_number": "****-****-****-4901",
+    "status": "ACTIVE",
+    "limit": 5000,
+    "billing_day": 10,
+    "spending_profile": "AVERAGE",
+    "current_spend": 203.93,
+    "issue_date": "2025-01-01",
+    "expiry_date": "2028-01-01",
+    "last_bill_date": "2025-01-10"
+  },
+  {
+    "card_id": "card_5",
+    "account_id": "acc_5",
+    "masked_number": "****-****-****-9293",
+    "status": "ACTIVE",
+    "limit": 5000,
+    "billing_day": 10,
+    "spending_profile": "AVERAGE",
+    "current_spend": 699.2800000000002,
+    "issue_date": "2025-01-01",
+    "expiry_date": "2028-01-01",
+    "last_bill_date": "2025-01-10"
+  }
+]

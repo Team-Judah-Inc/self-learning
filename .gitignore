@@ -34,3 +34,6 @@ build/
 
 # Local blob storage
 /storage/
+
+# mock bank venv
+/mock-bank/venv
