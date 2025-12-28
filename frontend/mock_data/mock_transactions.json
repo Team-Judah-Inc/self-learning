@@ -1,0 +1,122 @@
+[
+  {
+    "id": "txn_001",
+    "account_id": "acc_001",
+    "provider_transaction_id": "ptxn_leumi_001",
+    "amount": -50.00,
+    "currency": "ILS",
+    "description": "Grocery Store",
+    "merchant_name": "Supermarket",
+    "category": "Food",
+    "transaction_date": "2023-10-25T10:00:00Z",
+    "system_inserted_at": "2023-10-26T10:00:00Z"
+  },
+  {
+    "id": "txn_002",
+    "account_id": "acc_001",
+    "provider_transaction_id": "ptxn_leumi_002",
+    "amount": -120.00,
+    "currency": "ILS",
+    "description": "Gas Station",
+    "merchant_name": "FuelCo",
+    "category": "Transport",
+    "transaction_date": "2023-10-24T15:30:00Z",
+    "system_inserted_at": "2023-10-26T10:00:00Z"
+  },
+  {
+    "id": "txn_003",
+    "account_id": "acc_002",
+    "provider_transaction_id": "ptxn_hapoalim_003",
+    "amount": 2500.00,
+    "currency": "ILS",
+    "description": "Salary",
+    "merchant_name": "Tech Corp",
+    "category": "Income",
+    "transaction_date": "2023-10-01T09:00:00Z",
+    "system_inserted_at": "2023-10-02T09:00:00Z"
+  },
+  {
+    "id": "txn_004",
+    "account_id": "acc_002",
+    "provider_transaction_id": "ptxn_hapoalim_004",
+    "amount": -200.00,
+    "currency": "ILS",
+    "description": "Electric Bill",
+    "merchant_name": "Electric Company",
+    "category": "Utilities",
+    "transaction_date": "2023-10-15T10:00:00Z",
+    "system_inserted_at": "2023-10-16T10:00:00Z"
+  },
+  {
+    "id": "txn_005",
+    "account_id": "acc_003",
+    "provider_transaction_id": "ptxn_visa_005",
+    "amount": -15.99,
+    "currency": "USD",
+    "description": "Netflix Subscription",
+    "merchant_name": "Netflix",
+    "category": "Entertainment",
+    "transaction_date": "2023-10-20T00:00:00Z",
+    "system_inserted_at": "2023-10-21T00:00:00Z"
+  },
+  {
+    "id": "txn_006",
+    "account_id": "acc_003",
+    "provider_transaction_id": "ptxn_visa_006",
+    "amount": -45.00,
+    "currency": "USD",
+    "description": "Amazon Purchase",
+    "merchant_name": "Amazon",
+    "category": "Shopping",
+    "transaction_date": "2023-10-22T14:00:00Z",
+    "system_inserted_at": "2023-10-23T14:00:00Z"
+  },
+  {
+    "id": "txn_007",
+    "account_id": "acc_004",
+    "provider_transaction_id": "ptxn_mc_007",
+    "amount": -30.00,
+    "currency": "EUR",
+    "description": "Restaurant Dinner",
+    "merchant_name": "Italian Bistro",
+    "category": "Dining",
+    "transaction_date": "2023-10-18T19:00:00Z",
+    "system_inserted_at": "2023-10-19T19:00:00Z"
+  },
+  {
+    "id": "txn_008",
+    "account_id": "acc_004",
+    "provider_transaction_id": "ptxn_mc_008",
+    "amount": -10.00,
+    "currency": "EUR",
+    "description": "Coffee Shop",
+    "merchant_name": "Cafe Aroma",
+    "category": "Dining",
+    "transaction_date": "2023-10-19T08:30:00Z",
+    "system_inserted_at": "2023-10-20T08:30:00Z"
+  },
+  {
+    "id": "txn_009",
+    "account_id": "acc_005",
+    "provider_transaction_id": "ptxn_discount_009",
+    "amount": -500.00,
+    "currency": "ILS",
+    "description": "Car Insurance",
+    "merchant_name": "Insurance Co",
+    "category": "Insurance",
+    "transaction_date": "2023-10-05T11:00:00Z",
+    "system_inserted_at": "2023-10-06T11:00:00Z"
+  },
+  {
+    "id": "txn_010",
+    "account_id": "acc_005",
+    "provider_transaction_id": "ptxn_discount_010",
+    "amount": -150.00,
+    "currency": "ILS",
+    "description": "Gym Membership",
+    "merchant_name": "City Gym",
+    "category": "Health",
+    "transaction_date": "2023-10-01T07:00:00Z",
+    "system_inserted_at": "2023-10-02T07:00:00Z"
+  }
+]
