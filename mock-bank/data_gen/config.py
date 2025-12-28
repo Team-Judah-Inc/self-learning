@@ -1,34 +1,23 @@
 import os
 
-# The directory where all JSON data files are stored
 DATA_DIR = 'mock_data'
+os.makedirs(DATA_DIR, exist_ok=True)
 
-# Configuration for the simulation engine
-# These values determine how the world behaves by default
 DEFAULT_CONFIG = {
     "probabilities": {
-        "home_location_chance": 0.90,  # 90% chance a transaction happens in the user's city
+        "home_location_chance": 0.90,
         "categories": {
-            "Food & Dining": 0.30,
-            "Shopping": 0.20,
-            "Transport": 0.15,
-            "Entertainment": 0.10,
-            "Health & Wellness": 0.10,
-            "Travel": 0.05,
-            "Utilities": 0.10
+            "Food & Dining": 0.30, "Shopping": 0.20, "Transport": 0.15,
+            "Entertainment": 0.10, "Health & Wellness": 0.10, "Travel": 0.05, "Utilities": 0.10
         }
     },
     "financial": {
-        "initial_balance_range": [1000, 5000],
-        "salary_range": [3000, 9000],
-        "default_credit_limit": 5000,
-        "manual_transaction_default": -10.00,
+        "initial_balance_range": [1000, 5000], "salary_range": [3000, 9000],
+        "default_credit_limit": 5000, "manual_transaction_default": -10.00,
         "transfer_default_amount": 50.00
     },
     "time": {
-        "payroll_days": [1, 15],  # Days of the month when salaries are deposited
-        "billing_cycle_options": [1, 10, 15],  # Possible days for credit card billing
-        "card_expiry_years": 3
+        "payroll_days": [1, 15], "billing_cycle_options": [1, 10, 15], "card_expiry_years": 3
     },
     "behavior": {
         "spending_profiles": {

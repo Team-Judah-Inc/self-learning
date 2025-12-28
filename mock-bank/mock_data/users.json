@@ -2,12 +2,12 @@
   {
     "user_id": "u_1",
     "username": "user1",
-    "password_hash": "pbkdf2:sha256:600000$yYBEQOX9dx8JLdDD$231dbf6591b75049de6786d33ff9341377c28f4d90865600ce5db33c175ac6dc",
-    "first_name": "Scott",
-    "last_name": "Martinez",
-    "email": "christopher01@example.org",
-    "city": "West Heather",
-    "created_at": "2025-01-01",
+    "password_hash": "pbkdf2:sha256:600000$OMsTzetat9HxZ6rr$b185f7bc42bf9703804633ccfc3b7f75ff262e4e6e6187d23a4b10b571ff9733",
+    "first_name": "Robert",
+    "last_name": "Smith",
+    "email": "melissa34@example.net",
+    "city": "Martinville",
+    "created_at": "2025-12-28",
     "settings": {
       "theme": "light",
       "notifications": true
@@ -16,12 +16,12 @@
   {
     "user_id": "u_2",
     "username": "user2",
-    "password_hash": "pbkdf2:sha256:600000$BClUKNfgrNHHCkjw$8a1bbd0570be5f30217af567ec6423e0676298c3470baafa217844ad5ea15b29",
-    "first_name": "Rachel",
-    "last_name": "Ashley",
-    "email": "masondowns@example.net",
-    "city": "Thompsonstad",
-    "created_at": "2025-01-01",
+    "password_hash": "pbkdf2:sha256:600000$P3c9O6hx7sHkqiMr$8b96c0df1f5c7c645b2c02843cc4978a471a70d32e5220bc24bf73c70c64797f",
+    "first_name": "Morgan",
+    "last_name": "Green",
+    "email": "cheryllopez@example.net",
+    "city": "New Tiffanychester",
+    "created_at": "2025-12-28",
     "settings": {
       "theme": "light",
       "notifications": true
@@ -30,12 +30,12 @@
   {
     "user_id": "u_3",
     "username": "user3",
-    "password_hash": "pbkdf2:sha256:600000$oAcSKZPg451q8RHB$5b411ebfeea3476566bfc42e63ace0348a9ce526858ae26bfb2c69b9b08f0c92",
-    "first_name": "Christopher",
-    "last_name": "Frazier",
-    "email": "omitchell@example.com",
-    "city": "New Jennifer",
-    "created_at": "2025-01-01",
+    "password_hash": "pbkdf2:sha256:600000$7gEnQc5bugwSmLlI$42d76902ee715ff7fe888dac58de84b7dd041d01394e6e079ec713b64a64a000",
+    "first_name": "Brenda",
+    "last_name": "Jackson",
+    "email": "jenniferlee@example.com",
+    "city": "Andrewmouth",
+    "created_at": "2025-12-28",
     "settings": {
       "theme": "light",
       "notifications": true
@@ -44,12 +44,12 @@
   {
     "user_id": "u_4",
     "username": "user4",
-    "password_hash": "pbkdf2:sha256:600000$t8f0EwJDpixFkshF$b8e7e1bf418b2c662043ef0999d38d690da5451f28b899d16ef57d1e5701d503",
-    "first_name": "Jasmine",
-    "last_name": "Pennington",
-    "email": "harperlaura@example.net",
-    "city": "Sanchezberg",
-    "created_at": "2025-01-01",
+    "password_hash": "pbkdf2:sha256:600000$ZIAv0HGWGoVSbbBc$1408ee6866416c7ba9b644e24762a2a316f1f679099fcfce1969a0a2b9a4a2f1",
+    "first_name": "Anthony",
+    "last_name": "Dixon",
+    "email": "qsmith@example.org",
+    "city": "West Cory",
+    "created_at": "2025-12-28",
     "settings": {
       "theme": "light",
       "notifications": true
@@ -58,68 +58,12 @@
   {
     "user_id": "u_5",
     "username": "user5",
-    "password_hash": "pbkdf2:sha256:600000$2AV97ZoXHbOfyWPO$74bdc6efb6359c5ab855a8fc7e5f805c28a179781a4d0448a31aa417266e1d4c",
-    "first_name": "Katherine",
-    "last_name": "Ellison",
-    "email": "mooreluis@example.com",
-    "city": "Blackmouth",
-    "created_at": "2025-01-01",
-    "settings": {
-      "theme": "light",
-      "notifications": true
-    }
-  },
-  {
-    "user_id": "u_6",
-    "username": "user6",
-    "password_hash": "pbkdf2:sha256:600000$D6FXmG9iMRYDpkT3$203e27479391d3e9b8499c5ef9fea6a10a28cb77cffe1b6ef039477fcc89f8a1",
-    "first_name": "Dan",
-    "last_name": "Thompson",
-    "email": "clarkkathleen@example.net",
-    "city": "Pricebury",
-    "created_at": "2025-01-31",
-    "settings": {
-      "theme": "light",
-      "notifications": true
-    }
-  },
-  {
-    "user_id": "u_7",
-    "username": "user7",
-    "password_hash": "pbkdf2:sha256:600000$QgcsHHX07D8Qkj10$899c393bb9bcd12b526e9b772d66c342abe00686ba388a8c132b72ee23ae0277",
-    "first_name": "Andrew",
-    "last_name": "Williams",
-    "email": "paulawilliams@example.net",
-    "city": "East Rhondafort",
-    "created_at": "2025-01-31",
-    "settings": {
-      "theme": "light",
-      "notifications": true
-    }
-  },
-  {
-    "user_id": "u_8",
-    "username": "user8",
-    "password_hash": "pbkdf2:sha256:600000$1RFoM6qXDSvIaPDj$0f21f0594f0ee63345dd22d8ba6754ff1088790fccecd069f1fcf88b8f697b5a",
-    "first_name": "Brad",
-    "last_name": "Kim",
-    "email": "ystewart@example.org",
-    "city": "Port Jamieberg",
-    "created_at": "2025-01-31",
-    "settings": {
-      "theme": "light",
-      "notifications": true
-    }
-  },
-  {
-    "user_id": "u_9",
-    "username": "user9",
-    "password_hash": "pbkdf2:sha256:600000$UnVIstGQ1HSV6PJZ$225f990f4a8c6c31e3cc0020c047f13a1a0cadd7e97549cb6836dd7306922907",
-    "first_name": "Roger",
-    "last_name": "Peters",
-    "email": "youngsarah@example.com",
-    "city": "Bobbyview",
-    "created_at": "2025-01-31",
+    "password_hash": "pbkdf2:sha256:600000$Vv008TEWGMjIDQF9$8fb7204fcef1d3c4228b084da10a07d43005765bc3114a6925681933476196d6",
+    "first_name": "Robert",
+    "last_name": "Mcclure",
+    "email": "jillhall@example.net",
+    "city": "Lindsaybury",
+    "created_at": "2025-12-28",
     "settings": {
       "theme": "light",
       "notifications": true

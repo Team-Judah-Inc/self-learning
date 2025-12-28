@@ -1,0 +1,592 @@
+[
+  {
+    "transaction_id": "ctxn_1",
+    "card_id": "card_2",
+    "amount": -130.31,
+    "date": "2025-12-29",
+    "description": "Marks and Sons",
+    "category": "Food & Dining",
+    "location": "New Tiffanychester",
+    "type": "DEBIT"
+  },
+  {
+    "transaction_id": "ctxn_2",
+    "card_id": "card_5",
+    "amount": -72.03,
+    "date": "2025-12-29",
+    "description": "Pham, Peters and Lopez",
+    "category": "Utilities",
+    "location": "Lindsaybury",
+    "type": "DEBIT"
+  },
+  {
+    "transaction_id": "ctxn_3",
+    "card_id": "card_2",
+    "amount": -162.95,
+    "date": "2025-12-30",
+    "description": "Hamilton, Moon and Anderson",
+    "category": "Transport",
+    "location": "New Tiffanychester",
+    "type": "DEBIT"
+  },
+  {
+    "transaction_id": "ctxn_4",
+    "card_id": "card_4",
+    "amount": -43.15,
+    "date": "2025-12-30",
+    "description": "Turner Inc",
+    "category": "Transport",
+    "location": "West Cory",
+    "type": "DEBIT"
+  },
+  {
+    "transaction_id": "ctxn_5",
+    "card_id": "card_5",
+    "amount": -36.86,
+    "date": "2025-12-30",
+    "description": "Hanna LLC",
+    "category": "Utilities",
+    "location": "Lindsaybury",
+    "type": "DEBIT"
+  },
+  {
+    "transaction_id": "ctxn_6",
+    "card_id": "card_2",
+    "amount": -52.19,
+    "date": "2025-12-31",
+    "description": "Peterson, Cruz and Smith",
+    "category": "Entertainment",
+    "location": "New Tiffanychester",
+    "type": "DEBIT"
+  },
+  {
+    "transaction_id": "ctxn_7",
+    "card_id": "card_2",
+    "amount": -111.15,
+    "date": "2026-01-01",
+    "description": "Dawson Inc",
+    "category": "Food & Dining",
+    "location": "New Tiffanychester",
+    "type": "DEBIT"
+  },
+  {
+    "transaction_id": "ctxn_8",
+    "card_id": "card_4",
+    "amount": -65.4,
+    "date": "2026-01-01",
+    "description": "Vang-Knapp",
+    "category": "Shopping",
+    "location": "West Cory",
+    "type": "DEBIT"
+  },
+  {
+    "transaction_id": "ctxn_9",
+    "card_id": "card_2",
+    "amount": -174.09,
+    "date": "2026-01-02",
+    "description": "Barton LLC",
+    "category": "Food & Dining",
+    "location": "New Tiffanychester",
+    "type": "DEBIT"
+  },
+  {
+    "transaction_id": "ctxn_10",
+    "card_id": "card_5",
+    "amount": -6.69,
+    "date": "2026-01-03",
+    "description": "Shelton Inc",
+    "category": "Shopping",
+    "location": "Lindsaybury",
+    "type": "DEBIT"
+  },
+  {
+    "transaction_id": "ctxn_11",
+    "card_id": "card_4",
+    "amount": -33.19,
+    "date": "2026-01-04",
+    "description": "Howell-Smith",
+    "category": "Food & Dining",
+    "location": "West Cory",
+    "type": "DEBIT"
+  },
+  {
+    "transaction_id": "ctxn_12",
+    "card_id": "card_2",
+    "amount": -50.23,
+    "date": "2026-01-05",
+    "description": "Nguyen-Bishop",
+    "category": "Food & Dining",
+    "location": "Livingstonside",
+    "type": "DEBIT"
+  },
+  {
+    "transaction_id": "ctxn_13",
+    "card_id": "card_4",
+    "amount": -50.36,
+    "date": "2026-01-05",
+    "description": "Diaz Ltd",
+    "category": "Travel",
+    "location": "West Cory",
+    "type": "DEBIT"
+  },
+  {
+    "transaction_id": "ctxn_14",
+    "card_id": "card_5",
+    "amount": -32.24,
+    "date": "2026-01-06",
+    "description": "Wilson, Hernandez and Simpson",
+    "category": "Entertainment",
+    "location": "Lindsaybury",
+    "type": "DEBIT"
+  },
+  {
+    "transaction_id": "ctxn_15",
+    "card_id": "card_4",
+    "amount": -44.66,
+    "date": "2026-01-07",
+    "description": "Hall-Martin",
+    "category": "Health & Wellness",
+    "location": "West Cory",
+    "type": "DEBIT"
+  },
+  {
+    "transaction_id": "ctxn_16",
+    "card_id": "card_1",
+    "amount": -21.3,
+    "date": "2026-01-09",
+    "description": "Hernandez-Davis",
+    "category": "Utilities",
+    "location": "Martinville",
+    "type": "DEBIT"
+  },
+  {
+    "transaction_id": "ctxn_17",
+    "card_id": "card_4",
+    "amount": -49.18,
+    "date": "2026-01-09",
+    "description": "Smith, Smith and Crawford",
+    "category": "Food & Dining",
+    "location": "West Cory",
+    "type": "DEBIT"
+  },
+  {
+    "transaction_id": "ctxn_18",
+    "card_id": "card_2",
+    "amount": -198.33,
+    "date": "2026-01-10",
+    "description": "Conley Inc",
+    "category": "Food & Dining",
+    "location": "New Tiffanychester",
+    "type": "DEBIT"
+  },
+  {
+    "transaction_id": "ctxn_19",
+    "card_id": "card_4",
+    "amount": -80.44,
+    "date": "2026-01-10",
+    "description": "Wagner-Sullivan",
+    "category": "Food & Dining",
+    "location": "West Cory",
+    "type": "DEBIT"
+  },
+  {
+    "transaction_id": "ctxn_20",
+    "card_id": "card_2",
+    "amount": -17.81,
+    "date": "2026-01-11",
+    "description": "Butler-Sanchez",
+    "category": "Food & Dining",
+    "location": "New Tiffanychester",
+    "type": "DEBIT"
+  },
+  {
+    "transaction_id": "ctxn_21",
+    "card_id": "card_1",
+    "amount": -17.23,
+    "date": "2026-01-12",
+    "description": "Johnson LLC",
+    "category": "Shopping",
+    "location": "Martinville",
+    "type": "DEBIT"
+  },
+  {
+    "transaction_id": "ctxn_22",
+    "card_id": "card_2",
+    "amount": -10.32,
+    "date": "2026-01-12",
+    "description": "Foster and Sons",
+    "category": "Food & Dining",
+    "location": "New Tiffanychester",
+    "type": "DEBIT"
+  },
+  {
+    "transaction_id": "ctxn_23",
+    "card_id": "card_4",
+    "amount": -33.17,
+    "date": "2026-01-12",
+    "description": "Frazier, Holmes and Wright",
+    "category": "Food & Dining",
+    "location": "West Cory",
+    "type": "DEBIT"
+  },
+  {
+    "transaction_id": "ctxn_24",
+    "card_id": "card_5",
+    "amount": -29.89,
+    "date": "2026-01-12",
+    "description": "Palmer-Butler",
+    "category": "Transport",
+    "location": "Lindsaybury",
+    "type": "DEBIT"
+  },
+  {
+    "transaction_id": "ctxn_25",
+    "card_id": "card_2",
+    "amount": -243.97,
+    "date": "2026-01-13",
+    "description": "Jones Group",
+    "category": "Food & Dining",
+    "location": "New Tiffanychester",
+    "type": "DEBIT"
+  },
+  {
+    "transaction_id": "ctxn_26",
+    "card_id": "card_5",
+    "amount": -21.23,
+    "date": "2026-01-13",
+    "description": "Lee, Howell and Harris",
+    "category": "Food & Dining",
+    "location": "Lindsaybury",
+    "type": "DEBIT"
+  },
+  {
+    "transaction_id": "ctxn_27",
+    "card_id": "card_2",
+    "amount": -157.38,
+    "date": "2026-01-14",
+    "description": "Schmidt and Sons",
+    "category": "Food & Dining",
+    "location": "New Tiffanychester",
+    "type": "DEBIT"
+  },
+  {
+    "transaction_id": "ctxn_28",
+    "card_id": "card_4",
+    "amount": -41.86,
+    "date": "2026-01-14",
+    "description": "Bradley-Martinez",
+    "category": "Transport",
+    "location": "West Kimberlyton",
+    "type": "DEBIT"
+  },
+  {
+    "transaction_id": "ctxn_29",
+    "card_id": "card_2",
+    "amount": -170.21,
+    "date": "2026-01-15",
+    "description": "Lloyd-Herrera",
+    "category": "Health & Wellness",
+    "location": "New Tiffanychester",
+    "type": "DEBIT"
+  },
+  {
+    "transaction_id": "ctxn_30",
+    "card_id": "card_2",
+    "amount": -147.29,
+    "date": "2026-01-16",
+    "description": "Soto Inc",
+    "category": "Food & Dining",
+    "location": "West Nicole",
+    "type": "DEBIT"
+  },
+  {
+    "transaction_id": "ctxn_31",
+    "card_id": "card_4",
+    "amount": -29.35,
+    "date": "2026-01-16",
+    "description": "Johnson, Francis and Jennings",
+    "category": "Food & Dining",
+    "location": "West Cory",
+    "type": "DEBIT"
+  },
+  {
+    "transaction_id": "ctxn_32",
+    "card_id": "card_5",
+    "amount": -55.96,
+    "date": "2026-01-16",
+    "description": "Parker-Bishop",
+    "category": "Utilities",
+    "location": "Lindsaybury",
+    "type": "DEBIT"
+  },
+  {
+    "transaction_id": "ctxn_33",
+    "card_id": "card_2",
+    "amount": -60.68,
+    "date": "2026-01-17",
+    "description": "Mclaughlin-Castillo",
+    "category": "Food & Dining",
+    "location": "New Tiffanychester",
+    "type": "DEBIT"
+  },
+  {
+    "transaction_id": "ctxn_34",
+    "card_id": "card_4",
+    "amount": -42.26,
+    "date": "2026-01-17",
+    "description": "Griffin-Robinson",
+    "category": "Health & Wellness",
+    "location": "West Cory",
+    "type": "DEBIT"
+  },
+  {
+    "transaction_id": "ctxn_35",
+    "card_id": "card_5",
+    "amount": -43.34,
+    "date": "2026-01-17",
+    "description": "Mccall Ltd",
+    "category": "Shopping",
+    "location": "Lindsaybury",
+    "type": "DEBIT"
+  },
+  {
+    "transaction_id": "ctxn_36",
+    "card_id": "card_2",
+    "amount": -167.74,
+    "date": "2026-01-18",
+    "description": "Ballard, Miller and Rodriguez",
+    "category": "Transport",
+    "location": "New Tiffanychester",
+    "type": "DEBIT"
+  },
+  {
+    "transaction_id": "ctxn_37",
+    "card_id": "card_5",
+    "amount": -97.92,
+    "date": "2026-01-18",
+    "description": "Roy Group",
+    "category": "Shopping",
+    "location": "Lindsaybury",
+    "type": "DEBIT"
+  },
+  {
+    "transaction_id": "ctxn_38",
+    "card_id": "card_2",
+    "amount": -240.19,
+    "date": "2026-01-19",
+    "description": "Nelson and Sons",
+    "category": "Food & Dining",
+    "location": "New Tiffanychester",
+    "type": "DEBIT"
+  },
+  {
+    "transaction_id": "ctxn_39",
+    "card_id": "card_5",
+    "amount": -36.67,
+    "date": "2026-01-19",
+    "description": "Swanson-Mathis",
+    "category": "Shopping",
+    "location": "Lindsaybury",
+    "type": "DEBIT"
+  },
+  {
+    "transaction_id": "ctxn_40",
+    "card_id": "card_2",
+    "amount": -134.06,
+    "date": "2026-01-20",
+    "description": "Jensen LLC",
+    "category": "Utilities",
+    "location": "New Tiffanychester",
+    "type": "DEBIT"
+  },
+  {
+    "transaction_id": "ctxn_41",
+    "card_id": "card_4",
+    "amount": -85.94,
+    "date": "2026-01-20",
+    "description": "Barnes and Sons",
+    "category": "Transport",
+    "location": "West Cory",
+    "type": "DEBIT"
+  },
+  {
+    "transaction_id": "ctxn_42",
+    "card_id": "card_4",
+    "amount": -80.84,
+    "date": "2026-01-21",
+    "description": "Thomas LLC",
+    "category": "Entertainment",
+    "location": "West Cory",
+    "type": "DEBIT"
+  },
+  {
+    "transaction_id": "ctxn_43",
+    "card_id": "card_5",
+    "amount": -28.51,
+    "date": "2026-01-21",
+    "description": "Cook and Sons",
+    "category": "Food & Dining",
+    "location": "Lindsaybury",
+    "type": "DEBIT"
+  },
+  {
+    "transaction_id": "ctxn_44",
+    "card_id": "card_2",
+    "amount": -185.71,
+    "date": "2026-01-22",
+    "description": "Hernandez PLC",
+    "category": "Food & Dining",
+    "location": "New Tiffanychester",
+    "type": "DEBIT"
+  },
+  {
+    "transaction_id": "ctxn_45",
+    "card_id": "card_4",
+    "amount": -32.92,
+    "date": "2026-01-22",
+    "description": "Moody LLC",
+    "category": "Travel",
+    "location": "West Cory",
+    "type": "DEBIT"
+  },
+  {
+    "transaction_id": "ctxn_46",
+    "card_id": "card_2",
+    "amount": -100.38,
+    "date": "2026-01-23",
+    "description": "Flores-Williams",
+    "category": "Food & Dining",
+    "location": "New Tiffanychester",
+    "type": "DEBIT"
+  },
+  {
+    "transaction_id": "ctxn_47",
+    "card_id": "card_4",
+    "amount": -45.15,
+    "date": "2026-01-23",
+    "description": "Washington PLC",
+    "category": "Shopping",
+    "location": "West Cory",
+    "type": "DEBIT"
+  },
+  {
+    "transaction_id": "ctxn_48",
+    "card_id": "card_5",
+    "amount": -45.12,
+    "date": "2026-01-23",
+    "description": "Green PLC",
+    "category": "Entertainment",
+    "location": "Lindsaybury",
+    "type": "DEBIT"
+  },
+  {
+    "transaction_id": "ctxn_49",
+    "card_id": "card_2",
+    "amount": -107.76,
+    "date": "2026-01-24",
+    "description": "Moore-Figueroa",
+    "category": "Shopping",
+    "location": "New Tiffanychester",
+    "type": "DEBIT"
+  },
+  {
+    "transaction_id": "ctxn_50",
+    "card_id": "card_4",
+    "amount": -37.86,
+    "date": "2026-01-24",
+    "description": "Chase Inc",
+    "category": "Entertainment",
+    "location": "West Cory",
+    "type": "DEBIT"
+  },
+  {
+    "transaction_id": "ctxn_51",
+    "card_id": "card_5",
+    "amount": -51.77,
+    "date": "2026-01-24",
+    "description": "Rose PLC",
+    "category": "Shopping",
+    "location": "Lindsaybury",
+    "type": "DEBIT"
+  },
+  {
+    "transaction_id": "ctxn_52",
+    "card_id": "card_2",
+    "amount": -115.51,
+    "date": "2026-01-25",
+    "description": "Sandoval, Ortiz and Warren",
+    "category": "Transport",
+    "location": "New Tiffanychester",
+    "type": "DEBIT"
+  },
+  {
+    "transaction_id": "ctxn_53",
+    "card_id": "card_5",
+    "amount": -69.65,
+    "date": "2026-01-25",
+    "description": "Hernandez, Schmidt and Chapman",
+    "category": "Food & Dining",
+    "location": "Lindsaybury",
+    "type": "DEBIT"
+  },
+  {
+    "transaction_id": "ctxn_54",
+    "card_id": "card_2",
+    "amount": -117.17,
+    "date": "2026-01-26",
+    "description": "Ellis Group",
+    "category": "Entertainment",
+    "location": "New Tiffanychester",
+    "type": "DEBIT"
+  },
+  {
+    "transaction_id": "ctxn_55",
+    "card_id": "card_4",
+    "amount": -54.79,
+    "date": "2026-01-26",
+    "description": "Watson Inc",
+    "category": "Utilities",
+    "location": "West Cory",
+    "type": "DEBIT"
+  },
+  {
+    "transaction_id": "ctxn_56",
+    "card_id": "card_2",
+    "amount": -172.64,
+    "date": "2026-01-27",
+    "description": "Gomez-Velasquez",
+    "category": "Shopping",
+    "location": "New Tiffanychester",
+    "type": "DEBIT"
+  },
+  {
+    "transaction_id": "ctxn_57",
+    "card_id": "card_3",
+    "amount": -21.55,
+    "date": "2026-01-27",
+    "description": "Wheeler, Flores and Kim",
+    "category": "Food & Dining",
+    "location": "Andrewmouth",
+    "type": "DEBIT"
+  },
+  {
+    "transaction_id": "ctxn_58",
+    "card_id": "card_4",
+    "amount": -54.86,
+    "date": "2026-01-27",
+    "description": "Edwards-Owen",
+    "category": "Entertainment",
+    "location": "West Cory",
+    "type": "DEBIT"
+  },
+  {
+    "transaction_id": "ctxn_59",
+    "card_id": "card_5",
+    "amount": -6.84,
+    "date": "2026-01-27",
+    "description": "James PLC",
+    "category": "Entertainment",
+    "location": "Lindsaybury",
+    "type": "DEBIT"
+  }
+]

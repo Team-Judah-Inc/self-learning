@@ -1,26 +1,14 @@
 """
 Data Generation Package for Mock Banking Simulation.
-This package handles the creation of users, financial products, 
-and the simulation of time and transactions.
 """
-
-from .utils import (
-    load_data, 
-    save_data, 
-    read_balances
-)
-
-from .generators import (
-    create_user, 
-    create_account, 
-    create_card
-)
-
 from .simulation import (
-    simulate_days, 
-    create_manual_transaction, 
-    create_transfer_transaction
+    BankingSimulation, 
+    run_simulation_loop,
+    process_manual_transaction,
+    process_transfer
 )
+from .repository import JsonRepository
+from .config import DATA_DIR
+from .models import User, Account, Card
 
-# Version of the data generator
-__version__ = "2.0.0"
+__version__ = "4.0.0"

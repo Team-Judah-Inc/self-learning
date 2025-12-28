@@ -1,204 +1,175 @@
 import datetime
 import random
-from faker import Faker
-from .utils import (
-    get_next_id, 
-    get_consistent_company, 
-    pick_weighted_category, 
-    pick_location
-)
+from typing import List, Optional
+from werkzeug.security import generate_password_hash
 
-fake = Faker()
+# --- FIX: Relative Imports ---
+from .models import User, Account, Card
+from .repository import DataRepository
+from .utils import fake, get_consistent_company, pick_weighted_category, pick_location
 
-# ==========================================
-# --- TRANSACTION LOGIC ---
-# ==========================================
+class BankingSimulation:
+    def __init__(self, repository: DataRepository):
+        self.repo = repository
+        self.users: List[User] = []
+        self.accounts: List[Account] = []
+        self.cards: List[Card] = []
+        self.account_txns: List[dict] = []
+        self.card_txns: List[dict] = []
+        self.config = {}
+        self.metadata = {}
 
-def create_manual_transaction(data, link_id, overrides=None):
-    """
-    Creates a single manual transaction (Debit or Credit).
-    Updates account balances or credit card spending accordingly.
-    """
-    config = data['configuration']
-    is_card = link_id.startswith("card_")
-    
-    default_amt = config['financial']['manual_transaction_default']
-    amount = float(overrides.get('amount', default_amt)) if overrides else default_amt
-    
-    # 1. Validation & Resource Lookup
-    user_city = "Unknown"
-    if is_card:
-        card = next((c for c in data['cards'] if c['card_id'] == link_id), None)
-        if not card:
-            print(f"Error: Card {link_id} not found."); return None
+    def load_world(self):
+        self.config = self.repo.load_config()
+        self.metadata = self.repo.load_metadata()
+        raw_users, raw_accounts, raw_cards, self.account_txns, self.card_txns = self.repo.load_resources()
         
-        if card['current_spend'] + abs(amount) > card['limit']:
-            print(f"Declined: Credit Limit Exceeded for {link_id}")
-            return None
-            
-        account_id = card['account_id']
-        card_id = link_id
-        acc = next((a for a in data['accounts'] if a['account_id'] == account_id), None)
-    else:
-        acc = next((a for a in data['accounts'] if a['account_id'] == link_id), None)
-        if not acc:
-            print(f"Error: Account {link_id} not found."); return None
-        account_id = link_id
-        card_id = None
+        self.users = [User(u) for u in raw_users]
+        self.accounts = []
+        for a in raw_accounts:
+            owner = next((u for u in self.users if u.user_id == a['user_id']), None)
+            if owner: self.accounts.append(Account(a, owner, self))
+        self.cards = []
+        for c in raw_cards:
+            acc = next((a for a in self.accounts if a.account_id == c['account_id']), None)
+            if acc: self.cards.append(Card(c, acc, self))
 
-    # Determine location for the transaction
-    if acc:
-        user = next((u for u in data['users'] if u['user_id'] == acc['user_id']), None)
-        if user: user_city = user['city']
+    def save_world(self):
+        self.repo.save_all(self.users, self.accounts, self.cards, self.account_txns, self.card_txns, self.metadata)
 
-    # 2. Record Creation
-    txn_num = get_next_id(data['transactions'], 'transaction')
-    cat = overrides.get('category', pick_weighted_category(config) if is_card else "Misc")
-    loc = overrides.get('location', pick_location(user_city, config))
+    def record_account_txn(self, account_id, amount, desc, cat, loc, date, type_override, group_id):
+        txn_id = self.repo.generate_id('atxn', self.account_txns)
+        txn_type = type_override if type_override else ("DEBIT" if amount < 0 else "CREDIT")
+        record = {
+            "transaction_id": txn_id, "account_id": account_id, "amount": amount,
+            "date": date, "description": desc, "category": cat,
+            "location": loc, "type": txn_type
+        }
+        if group_id: record['transfer_group_id'] = group_id
+        self.account_txns.append(record)
+        return record
 
-    txn = {
-        "transaction_id": f"txn_{txn_num}",
-        "account_id": account_id,
-        "card_id": card_id,
-        "amount": amount,
-        "date": data['metadata']['current_date'],
-        "description": overrides.get('description', "Manual Transaction"),
-        "category": cat,
-        "location": loc,
-        "type": "DEBIT" if amount < 0 else "CREDIT"
-    }
-    if overrides: txn.update(overrides)
+    def record_card_txn(self, card_id, amount, desc, cat, loc, date):
+        txn_id = self.repo.generate_id('ctxn', self.card_txns)
+        record = {
+            "transaction_id": txn_id, "card_id": card_id, "amount": amount,
+            "date": date, "description": desc, "category": cat,
+            "location": loc, "type": "DEBIT"
+        }
+        self.card_txns.append(record)
+        return record
 
-    # 3. Update State
-    if is_card:
-        card['current_spend'] += abs(amount)
-    else:
-        acc['balance'] += amount
-    
-    data['transactions'].append(txn)
-    return txn
+    def create_user(self, overrides: dict = None) -> User:
+        uid = self.repo.generate_id('user', self.users)
+        data = {
+            "user_id": uid, "username": f"user{uid.split('_')[1]}",
+            "password_hash": generate_password_hash("password123", method="pbkdf2:sha256"),
+            "first_name": fake.first_name(), "last_name": fake.last_name(), "email": fake.email(),
+            "city": fake.city(), "created_at": self.metadata['current_date'], 
+            "settings": {"theme": "light", "notifications": True}
+        }
+        if overrides: data.update(overrides)
+        u = User(data)
+        self.users.append(u)
+        return u
 
-def create_transfer_transaction(data, sender_id, receiver_id, overrides=None):
-    """
-    Executes a transfer between two accounts.
-    Creates two linked transaction records (Double Entry).
-    """
-    config = data['configuration']
-    sender = next((a for a in data['accounts'] if a['account_id'] == sender_id), None)
-    receiver = next((a for a in data['accounts'] if a['account_id'] == receiver_id), None)
-    
-    if not sender or not receiver:
-        print("Error: Invalid sender or receiver ID."); return None
+    def create_account(self, user_id: str, overrides: dict = None) -> Optional[Account]:
+        user = next((u for u in self.users if u.user_id == user_id), None)
+        if not user: return None
+        aid = self.repo.generate_id('account', self.accounts)
+        c = self.config['financial']
+        data = {
+            "account_id": aid, "user_id": user_id, "type": "CHECKING", "currency": "USD",
+            "balance": round(random.uniform(c['initial_balance_range'][0], c['initial_balance_range'][1]), 2),
+            "salary_amount": random.randrange(c['salary_range'][0], c['salary_range'][1], 100), "status": "ACTIVE"
+        }
+        if overrides: data.update(overrides)
+        acc = Account(data, user, self)
+        self.accounts.append(acc)
+        return acc
 
-    default_amt = config['financial']['transfer_default_amount']
-    amount = abs(float(overrides.get('amount', default_amt)) if overrides else default_amt)
+    def create_card(self, account_id: str, overrides: dict = None) -> Optional[Card]:
+        acc = next((a for a in self.accounts if a.account_id == account_id), None)
+        if not acc: return None
+        cid = self.repo.generate_id('card', self.cards)
+        cf, ct, cb = self.config['financial'], self.config['time'], self.config['behavior']
+        curr_date = datetime.date.fromisoformat(self.metadata['current_date'])
+        data = {
+            "card_id": cid, "account_id": account_id,
+            "masked_number": f"****-****-****-{random.randint(1000,9999)}",
+            "status": "ACTIVE", "limit": cf['default_credit_limit'],
+            "billing_day": random.choice(ct['billing_cycle_options']),
+            "spending_profile": random.choice(list(cb['spending_profiles'].keys())),
+            "current_spend": 0.0,
+            "issue_date": curr_date.isoformat(),
+            "expiry_date": (curr_date + datetime.timedelta(days=365 * ct['card_expiry_years'])).isoformat(),
+            "last_bill_date": None
+        }
+        if overrides: data.update(overrides)
+        card = Card(data, acc, self)
+        self.cards.append(card)
+        return card
 
-    # Update Balances
-    sender['balance'] -= amount
-    receiver['balance'] += amount
+def process_manual_transaction(sim: BankingSimulation, link_id: str, overrides: dict = None):
+    config = sim.config
+    amt = float(overrides.get('amount', config['financial']['manual_transaction_default'])) if overrides else config['financial']['manual_transaction_default']
 
-    txn_num = get_next_id(data['transactions'], 'transaction')
-    date_str = data['metadata']['current_date']
-    grp_id = f"grp_{txn_num}"
-    
-    txn_out = {
-        "transaction_id": f"txn_{txn_num}",
-        "account_id": sender_id, "card_id": None,
-        "amount": -amount, "date": date_str,
-        "description": f"Transfer to {receiver_id}",
-        "category": "Transfer", "location": "Online Banking",
-        "type": "DEBIT", "transfer_group_id": grp_id
-    }
-    
-    txn_in = {
-        "transaction_id": f"txn_{txn_num + 1}",
-        "account_id": receiver_id, "card_id": None,
-        "amount": amount, "date": date_str,
-        "description": f"Transfer from {sender_id}",
-        "category": "Transfer", "location": "Online Banking",
-        "type": "CREDIT", "transfer_group_id": grp_id
-    }
+    if link_id.startswith("card_"):
+        card = next((c for c in sim.cards if c.card_id == link_id), None)
+        if not card: print(f"❌ Error: Card {link_id} not found"); return
+        txn = card.charge(amt, "Manual Swipe", overrides.get('category', pick_weighted_category(config)),
+                          overrides.get('location', pick_location(card.linked_account.owner.city, config)), sim.metadata['current_date'])
+        if txn: print(f"💳 Charged. New Spend: {card.current_spend:.2f}")
+        else: print("⛔ Declined: Limit Exceeded")
 
-    data['transactions'].extend([txn_out, txn_in])
-    return [txn_out, txn_in]
+    elif link_id.startswith("acc_"):
+        acc = next((a for a in sim.accounts if a.account_id == link_id), None)
+        if not acc: print(f"❌ Error: Account {link_id} not found"); return
+        acc.post_transaction(amt, "Manual Op", overrides.get('category', "Misc"),
+                             overrides.get('location', pick_location(acc.owner.city, config)), sim.metadata['current_date'])
+        print(f"💰 Balance Adjusted: {acc.balance:.2f}")
 
-# ==========================================
-# --- SIMULATION ENGINE ---
-# ==========================================
+def process_transfer(sim: BankingSimulation, sender_id: str, receiver_id: str, overrides: dict = None):
+    sender = next((a for a in sim.accounts if a.account_id == sender_id), None)
+    receiver = next((a for a in sim.accounts if a.account_id == receiver_id), None)
+    if not sender or not receiver: print("❌ Invalid Accounts"); return
 
-def simulate_days(data, days_to_add, process_only=False):
-    """
-    Advances the world clock by N days.
-    Simulates payroll, discretionary spending, and monthly bills.
-    """
-    config = data['configuration']
-    spending_profiles = config['behavior']['spending_profiles']
-    payroll_days = config['time']['payroll_days']
+    amt = abs(float(overrides.get('amount', 50.00)) if overrides else 50.00)
+    grp_id = f"grp_{sim.repo.generate_id('atxn', sim.account_txns).split('_')[1]}"
+    date = sim.metadata['current_date']
 
-    start_date = datetime.date.fromisoformat(data['metadata']['current_date'])
-    end_date = start_date + datetime.timedelta(days=days_to_add)
-    
-    print(f"Simulating from {start_date} to {end_date}...")
-    
-    txn_num = get_next_id(data['transactions'], 'transaction')
-    current_date = start_date
+    sender.post_transaction(-amt, f"Transfer to {receiver_id}", "Transfer", "Online", date, "DEBIT", grp_id)
+    receiver.post_transaction(amt, f"Transfer from {sender_id}", "Transfer", "Online", date, "CREDIT", grp_id)
+    print(f"✅ Transferred ${amt:.2f}")
 
-    while current_date < end_date:
-        current_date += datetime.timedelta(days=1)
-        day_str = current_date.isoformat()
+def run_simulation_loop(sim: BankingSimulation, days: int, process_only: bool = False):
+    start = datetime.date.fromisoformat(sim.metadata['current_date'])
+    end = start + datetime.timedelta(days=days)
+    print(f"⏳ Advancing {start} -> {end}...")
+
+    curr = start
+    while curr < end:
+        curr += datetime.timedelta(days=1)
+        d_str = curr.isoformat()
         
-        for acc in data['accounts']:
-            user = next((u for u in data['users'] if u['user_id'] == acc['user_id']), None)
-            user_city = user['city'] if user else fake.city()
+        for acc in sim.accounts:
+            # Payroll
+            if curr.day in sim.config['time']['payroll_days']:
+                amt = acc.salary_amount / len(sim.config['time']['payroll_days'])
+                acc.post_transaction(amt, f"Payroll - {get_consistent_company(acc.user_id)}", "Income", "Direct Deposit", d_str, "CREDIT")
 
-            # 1. Payroll Logic
-            if current_date.day in payroll_days:
-                amt = acc.get('salary_amount', 3000) / len(payroll_days)
-                acc['balance'] += amt
-                employer = get_consistent_company(acc['user_id'])
-                data['transactions'].append({
-                    "transaction_id": f"txn_{txn_num}", "account_id": acc['account_id'],
-                    "amount": amt, "date": day_str, "description": f"Payroll - {employer}",
-                    "category": "Income", "location": "Direct Deposit",
-                    "type": "CREDIT", "card_id": None
-                })
-                txn_num += 1
-            
-            # 2. Card Logic (Spending & Billing)
-            linked_cards = [c for c in data['cards'] if c['account_id'] == acc['account_id']]
-            for card in linked_cards:
-                # Random Spending based on habit profile
+            my_cards = [c for c in sim.cards if c.account_id == acc.account_id]
+            for card in my_cards:
+                # Spending
                 if not process_only:
-                    habit = spending_profiles.get(card.get('spending_profile', 'AVERAGE'))
+                    habit = sim.config['behavior']['spending_profiles'].get(card.spending_profile, sim.config['behavior']['spending_profiles']['AVERAGE'])
                     if random.random() < habit['prob']:
                         raw_amt = random.gauss(habit['mean'], habit['std'])
                         amt = round(max(habit['min'], min(habit['max'], raw_amt)), 2)
-                        
-                        if card['current_spend'] + amt <= card['limit']:
-                            card['current_spend'] += amt
-                            data['transactions'].append({
-                                "transaction_id": f"txn_{txn_num}", "account_id": acc['account_id'],
-                                "amount": -amt, "date": day_str, "description": fake.company(),
-                                "category": pick_weighted_category(config), 
-                                "location": pick_location(user_city, config),
-                                "type": "DEBIT", "card_id": card['card_id']
-                            })
-                            txn_num += 1
+                        card.charge(-amt, fake.company(), pick_weighted_category(sim.config), pick_location(acc.owner.city, sim.config), d_str)
+                # Bill Pay
+                if curr.day == card.billing_day:
+                    card.pay_bill(d_str)
 
-                # Monthly Billing Logic
-                if current_date.day == card.get('billing_day', 10) and card['current_spend'] > 0:
-                    bill = round(card['current_spend'], 2)
-                    acc['balance'] -= bill
-                    data['transactions'].append({
-                        "transaction_id": f"txn_{txn_num}", "account_id": acc['account_id'],
-                        "amount": -bill, "date": day_str, 
-                        "description": f"Credit Card Bill Payment",
-                        "category": "Bills", "location": "Online Payment",
-                        "type": "DEBIT", "card_id": None
-                    })
-                    txn_num += 1
-                    card['current_spend'] = 0.0
-                    card['last_bill_date'] = day_str
-    
-    data['metadata']['current_date'] = end_date.isoformat()
-    print(f"Simulation complete. World date is now {data['metadata']['current_date']}")
+    sim.metadata['current_date'] = end.isoformat()
+    print("✅ Time Travel Complete.")
