@@ -1,0 +1,9 @@
+<svg width="100" height="100" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Stylized column/pillar -->
+  <path d="M40 30H60V70H55V35H45V70H40V30Z" fill="white"/>
+  <!-- Top part of the column -->
+  <path d="M35 30H65L50 15L35 30Z" fill="white"/>
+  <!-- Two circles below -->
+  <circle cx="40" cy="80" r="5" fill="white"/>
+  <circle cx="60" cy="80" r="5" fill="white"/>
+</svg>

@@ -1,0 +1,60 @@
+.error-popup {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  z-index: 1000;
+  max-width: 400px;
+  transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+.error-popup.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.error-popup.hidden {
+  opacity: 0;
+  transform: translateY(-20px);
+}
+
+.error-content {
+  background-color: #fff;
+  border-left: 4px solid #dc2626;
+  border-radius: 4px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  padding: 16px;
+  display: flex;
+  align-items: center;
+}
+
+.error-icon {
+  color: #dc2626;
+  margin-right: 12px;
+  flex-shrink: 0;
+}
+
+.error-message {
+  color: #1f2937;
+  font-size: 14px;
+  margin: 0;
+  flex-grow: 1;
+}
+
+.close-button {
+  background: none;
+  border: none;
+  color: #6b7280;
+  cursor: pointer;
+  padding: 4px;
+  margin-left: 8px;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 0.2s;
+}
+
+.close-button:hover {
+  background-color: #f3f4f6;
+  color: #1f2937;
+}
