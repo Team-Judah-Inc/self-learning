@@ -1,9 +1,9 @@
 from app import create_app
 
-# Initialize the Flask application using the factory pattern
+# Create the application instance
 app = create_app()
 
-if __name__ == '__main__':
-    # Running on 0.0.0.0 allows access from outside the container/host
-    # Debug mode is enabled for development purposes
+if __name__ == "__main__":
+    print(f"🚀 API Running on http://localhost:5000")
+    print(f"📄 Swagger UI: http://localhost:5000/apidocs")
     app.run(host='0.0.0.0', port=5000, debug=True)

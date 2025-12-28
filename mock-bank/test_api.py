@@ -1,90 +1,116 @@
-import requests
+import unittest
 import json
+import os
+import shutil
+import sys
+from werkzeug.security import generate_password_hash
 
-BASE_URL = "http://127.0.0.1:5000"
-USER_CREDENTIALS = {
-    "username": "user1",
-    "password": "password123"
-}
+# Ensure we can import from root
+sys.path.append(os.getcwd())
 
-def run_tests():
-    print(f"🚀 Starting API Integration Tests at {BASE_URL}\n")
-    token = None
+from app import create_app
+from data_gen import JsonRepository
 
-    # 1. Test Login
-    print("Test 1: Login...")
-    response = requests.post(f"{BASE_URL}/login", json=USER_CREDENTIALS)
-    if response.status_code == 200:
-        token = response.json().get("token")
-        print(f"✅ Login successful. Token received.")
-    else:
-        print(f"❌ Login failed: {response.status_code} - {response.text}")
-        return
+# Config
+TEST_DB_DIR = 'test_api_data'
 
-    headers = {"Authorization": f"Bearer {token}"}
+class TestBankingAPI(unittest.TestCase):
 
-    # 2. Test Get Profile
-    print("\nTest 2: Get User Profile...")
-    response = requests.get(f"{BASE_URL}/users/u_1", headers=headers)
-    if response.status_code == 200:
-        print(f"✅ Profile received: {response.json().get('first_name')} {response.json().get('last_name')}")
-    else:
-        print(f"❌ Failed to get profile: {response.status_code}")
+    def setUp(self):
+        """
+        Runs before EACH test.
+        1. Setup temp data folder.
+        2. Create Flask app with TEST config.
+        3. Seed data.
+        """
+        # 1. Setup Temp Directory
+        if os.path.exists(TEST_DB_DIR):
+            try: shutil.rmtree(TEST_DB_DIR)
+            except OSError: pass
+        os.makedirs(TEST_DB_DIR)
 
-    # 3. Test Get Accounts
-    print("\nTest 3: List Accounts...")
-    response = requests.get(f"{BASE_URL}/users/u_1/accounts", headers=headers)
-    if response.status_code == 200:
-        data = response.json()
+        # 2. Seed Initial Data using DataGen Repository
+        self.repo = JsonRepository(TEST_DB_DIR)
         
-        # --- Debugging (Optional: uncomment to see the structure) ---
-        # print(f"DEBUG: Data type is {type(data)}. Content: {data}")
-        # -----------------------------------------------------------
+        self.test_user = {
+            "user_id": "u_test",
+            "username": "tester",
+            "password_hash": generate_password_hash("password123"),
+            "first_name": "QA", "last_name": "Engineer", "email": "qa@test.com",
+            "city": "Testville", "created_at": "2023-01-01", "settings": {"theme": "dark"}
+        }
+        
+        self.test_account = {
+            "account_id": "acc_test", "user_id": "u_test",
+            "type": "CHECKING", "currency": "USD", "balance": 5000.00, "status": "ACTIVE"
+        }
 
-        # Normalize data to a flat list
-        if isinstance(data, dict):
-            accounts_list = list(data.values())
-        else:
-            accounts_list = data
+        # Helper class to mimic Objects for the repo
+        class MockObj:
+            def __init__(self, d): self.__dict__ = d
 
-        print(f"✅ Found {len(accounts_list)} items in accounts response.")
+        self.repo.save_all(
+            users=[MockObj(self.test_user)], 
+            accounts=[MockObj(self.test_account)],
+            cards=[], acc_txns=[], card_txns=[],
+            metadata={"current_date": "2023-01-01"}
+        )
 
-        if len(accounts_list) > 0:
-            first_item = accounts_list[0]
-            
-            # Defensive check: if the first item is a list, take its first element
-            if isinstance(first_item, list) and len(first_item) > 0:
-                first_account = first_item[0]
-            else:
-                first_account = first_item
+        # 3. Create App & Override Config
+        self.app = create_app()
+        self.app.config['TESTING'] = True
+        self.app.config['DATA_DIR'] = TEST_DB_DIR  # Point app to test folder
+        self.client = self.app.test_client()
 
-            # Now we should safely have a dictionary
-            if isinstance(first_account, dict):
-                acc_id = first_account.get('account_id')
-                print(f"✅ Identified Account ID: {acc_id}")
-                
-                # 4. Test Get Transactions
-                print(f"\nTest 4: Get Transactions for {acc_id}...")
-                tx_res = requests.get(f"{BASE_URL}/accounts/{acc_id}/transactions", headers=headers)
-                if tx_res.status_code == 200:
-                    tx_data = tx_res.json()
-                    tx_count = len(tx_data) if isinstance(tx_data, (list, dict)) else 0
-                    print(f"✅ Found {tx_count} transactions.")
-            else:
-                print(f"❌ Error: Account data format unexpected. Found: {type(first_account)}")
+    def tearDown(self):
+        """Cleanup after tests."""
+        if os.path.exists(TEST_DB_DIR):
+            try: shutil.rmtree(TEST_DB_DIR)
+            except OSError: pass
 
-    # 5. Test Unauthorized Access
-    print("\nTest 5: Unauthorized Access (Negative Test)...")
-    bad_res = requests.get(f"{BASE_URL}/users/u_1/accounts")
-    if bad_res.status_code == 401:
-        print("✅ Correct: Access denied without token.")
-    else:
-        print(f"❌ Fail: Access should have been denied but got {bad_res.status_code}")
+    # ==========================================
+    # --- AUTHENTICATION TESTS ---
+    # ==========================================
 
-    print("\n--- Tests Complete ---")
+    def test_login_success(self):
+        payload = {"username": "tester", "password": "password123"}
+        response = self.client.post('/login', json=payload)
+        self.assertEqual(response.status_code, 200)
+        self.assertIn('token', response.get_json())
 
-if __name__ == "__main__":
-    try:
-        run_tests()
-    except requests.exceptions.ConnectionError:
-        print(f"❌ Error: Could not connect to the API at {BASE_URL}. Is the server running?")
+    def test_login_failure(self):
+        payload = {"username": "tester", "password": "wrongpassword"}
+        response = self.client.post('/login', json=payload)
+        self.assertEqual(response.status_code, 401)
+
+    # ==========================================
+    # --- RESOURCE TESTS ---
+    # ==========================================
+
+    def get_auth_header(self):
+        resp = self.client.post('/login', json={"username": "tester", "password": "password123"})
+        token = resp.get_json()['token']
+        return {'Authorization': f'Bearer {token}'}
+
+    def test_get_user_profile(self):
+        headers = self.get_auth_header()
+        response = self.client.get('/users/u_test', headers=headers)
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.get_json()['email'], 'qa@test.com')
+
+    def test_get_user_accounts(self):
+        headers = self.get_auth_header()
+        response = self.client.get('/users/u_test/accounts', headers=headers)
+        data = response.get_json()
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(len(data['accounts']), 1)
+        self.assertEqual(data['accounts'][0]['account_id'], 'acc_test')
+
+    def test_access_denied_other_user(self):
+        """Ensure User A cannot see User B."""
+        headers = self.get_auth_header()
+        response = self.client.get('/users/u_admin', headers=headers)
+        self.assertEqual(response.status_code, 403)
+
+if __name__ == '__main__':
+    unittest.main()
