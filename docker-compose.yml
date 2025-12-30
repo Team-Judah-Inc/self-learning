@@ -1,0 +1,14 @@
+services:
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./backend/data:/app/data
+    environment:
+      - PORT=8080
+      - ENVIRONMENT=development
+      - DATABASE_PATH=data/riseapp.db
+    restart: unless-stopped
