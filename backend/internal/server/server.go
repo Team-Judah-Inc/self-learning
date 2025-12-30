@@ -1,30 +1,48 @@
 package server
 
 import (
+	"log"
 	"net/http"
 	"time"
 
 	"github.com/gorilla/mux"
 	"github.com/self-learning/backend/internal/config"
+	"github.com/self-learning/backend/internal/database"
 	"github.com/self-learning/backend/internal/handlers"
+	"github.com/self-learning/backend/internal/ingestion"
 	"github.com/self-learning/backend/internal/middleware"
+	"github.com/self-learning/backend/internal/services"
+	"gorm.io/gorm"
 )
 
 type Server struct {
 	config    *config.Config
+	db        *gorm.DB
 	router    *mux.Router
 	handlers  *handlers.Handler
 	startTime time.Time
 }
 
 func New(cfg *config.Config) *Server {
-	// Initialize services
-	//authService := services.NewAuthService(userRepo, cfg.JWTSecret)
+	// 1. Initialize Database
+	db := database.Connect(cfg.DatabasePath)
 
-	// Initialize handlers
-	h := handlers.New()
+	// 2. Initialize services
+	accountService := services.NewAccountService(db)
+
+	// 3. Initialize handlers
+	h := handlers.New(accountService)
+
+	// 4. Start background workers
+	queue := make(chan ingestion.SyncJob, 100)
+	go ingestion.StartFetcherLoop(db, queue)
+	go ingestion.StartNormalizerLoop(db, queue)
+
+	log.Println("Background ingestion workers started")
+
 	return &Server{
 		config:    cfg,
+		db:        db,
 		handlers:  h,
 		startTime: time.Now(),
 	}
@@ -51,4 +69,6 @@ func (s *Server) setupRoutes() {
 	// Apply Basic Auth middleware to all API routes
 	api.Use(middleware.BasicAuth)
 	
+	// Account routes
+	api.HandleFunc("/accounts", s.handlers.GetUserAccounts).Methods("GET")
 }

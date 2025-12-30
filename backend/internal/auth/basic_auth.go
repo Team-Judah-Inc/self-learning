@@ -8,9 +8,10 @@ type User struct {
 
 // Simple user store with plain text passwords (fine for demo)
 var validUsers = map[string]string{
-	"admin": "password123",
-	"noy":   "theQueen",
-	"demo":  "demo123",
+	"admin":     "password123",
+	"noy":       "theQueen",
+	"demo":      "demo123",
+	"user-dave": "password123",
 }
 
 // ValidateCredentials validates username and password and returns user info

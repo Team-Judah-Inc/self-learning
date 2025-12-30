@@ -7,15 +7,16 @@ import (
 )
 
 type Handler struct {
-	authService *services.AuthService
-	startTime   time.Time
+	authService    *services.AuthService
+	accountService *services.AccountService
+	startTime      time.Time
 }
 
 func New(
-// authService *services.AuthService,
+	accountService *services.AccountService,
 ) *Handler {
 	return &Handler{
-		//authService: authService,
-		startTime: time.Now(),
+		accountService: accountService,
+		startTime:      time.Now(),
 	}
 }
