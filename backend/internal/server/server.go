@@ -71,4 +71,5 @@ func (s *Server) setupRoutes() {
 	
 	// Account routes
 	api.HandleFunc("/accounts", s.handlers.GetUserAccounts).Methods("GET")
+	api.HandleFunc("/accounts/{accountID}/transactions", s.handlers.GetAccountTransactions).Methods("GET")
 }
