@@ -21,7 +21,7 @@ func GetUserFromContext(ctx context.Context) (*auth.AuthUser, bool) {
 func RequireAuth(w http.ResponseWriter, r *http.Request) (*auth.AuthUser, bool) {
 	user, ok := GetUserFromContext(r.Context())
 	if !ok {
-		http.Error(w, "Authentication required", http.StatusUnauthorized)
+		respondUnauthorized(w, "Authentication required")
 		return nil, false
 	}
 	return user, true
