@@ -1,149 +1,114 @@
 # Self-Learning Backend
 
-Go backend service for the self-learning application.
+Go backend service for the Finance MVP application.
+
+This uses a **Monolithic Architecture** that runs both the **API Server** (Read Layer) and the **Background Sync Engine** (Write Layer) in a single binary.
 
 ## Project Structure
 
-```
-self-learning/backend/
+```text
+backend/
 ├── cmd/
 │   └── server/
-│       └── main.go              # Application entry point
-├── internal/                    # Private application code
-│   ├── config/
-│   │   └── config.go           # Configuration management
-│   ├── server/
-│   │   ├── server.go           # Server setup and routing
-│   │   └── middleware.go       # Middleware functions
-│   ├── handlers/               # HTTP handlers (controllers)
-│   │   ├── health.go
-│   │   ├── auth.go
-│   │   └── user.go
-│   ├── services/               # Business logic layer
-│   │   ├── auth_service.go
-│   │   └── user_service.go
-│   ├── repository/             # Data access layer
-│   │   ├── interfaces.go
-│   │   ├── user_repo.go
-│   │   └── memory/
-│   │       └── user_memory.go
-│   ├── models/                 # Domain models/entities
-│   │   ├── user.go
-│   │   ├── auth.go
-│   │   └── response.go
-│   └── auth/                   # Authentication logic
-│       ├── auth.go
-│       └── middleware.go
-├── pkg/                        # Public libraries
-│   ├── logger/
-│   │   └── logger.go
-│   ├── validator/
-│   │   └── validator.go
-│   └── errors/
-│       └── errors.go
-├── api/                        # API documentation
-│   └── openapi.yaml
-├── migrations/                 # Database migrations
-├── scripts/                    # Build and deployment scripts
-├── docker/                     # Docker files
-│   └── Dockerfile
-├── go.mod
-├── go.sum
-└── README.md
-
-```
+│       └── main.go          # Entrypoint: Starts API + Fetcher/Normalizer Workers
+├── internal/
+│   ├── api/                 # HTTP Layer
+│   │   ├── handlers/        # Controllers (GET /transactions, etc.)
+│   │   ├── middleware/      # Auth & Logging
+│   │   └── routes.go        # Router Setup
+│   │
+│   ├── worker/              # The Sync Engine (Background Jobs)
+│   │   ├── fetcher.go       # Loop A: Pulls from Bank -> S3 -> Queue
+│   │   └── normalizer.go    # Loop B: Reads Queue -> DB (Deduplication)
+│   │
+│   ├── models/              # Shared Data Structs (User, Account, Transaction)
+│   ├── database/            # SQLite Connection & GORM AutoMigrate
+│   └── config/              # Configuration management
+│
+├── pkg/
+│   └── logger/              # Logging utilities
+├── go.mod                   # Dependencies
+├── go.sum                   # Checksums
+└── .env.example             # Env var template
+````
 
 ## Getting Started
 
 ### Prerequisites
 
-- Go 1.21 or higher
+* **Go 1.21** or higher
+* **VS Code Extension:**
+  [SQLite Viewer](https://marketplace.visualstudio.com/items?itemName=qwtel.sqlite-viewer)
+  (Recommended for viewing `riseapp.db` locally)
 
 ### Installation
 
 1. Clone the repository and navigate to the backend directory:
-```bash
-cd backend
-```
+
+   ```bash
+   cd backend
+   ```
 
 2. Copy the example environment file:
-```bash
-cp .env.example .env
-```
 
-3. Install dependencies:
-```bash
-go mod download
-```
+   ```bash
+   cp .env.example .env
+   ```
+
+3. Install dependencies (including GORM & SQLite driver):
+
+   ```bash
+   go mod tidy
+   ```
 
 ### Running the Server
 
-Development mode:
+**Development Mode**
+Starts the API on port `8080` **and** the background workers (Fetcher/Normalizer):
+
 ```bash
 go run cmd/server/main.go
 ```
 
-Build and run:
+To populate the database with a test account run:
 ```bash
-go build -o bin/server cmd/server/main.go
-./bin/server
+go run cmd/seed/main.go
 ```
 
-### Environment Variables
+---
+
+## Database Inspection (Local) 🗄️
+
+This project uses an embedded **SQLite** database (`riseapp.db`).
+It runs in **WAL Mode** (Write-Ahead Logging) for high concurrency.
+
+### How to view data
+
+1. Install the **SQLite Viewer** extension in VS Code.
+2. In the file explorer, click on `riseapp.db`.
+3. Browse the `users`, `accounts`, and `transactions` tables.
+4. **Note:** You may see `riseapp.db-wal` or `riseapp.db-shm` files.
+   Do **not** delete them — they are temporary consistency files managed by SQLite.
+
+---
+
+## Environment Variables
 
 See `.env.example` for all available configuration options:
 
-- `PORT` - Server port (default: 8080)
-- `ENVIRONMENT` - Environment mode (development/production)
-- `ALLOWED_ORIGINS` - CORS allowed origins
-- `DATABASE_URL` - Database connection string
-- `JWT_SECRET` - Secret key for JWT tokens
-- `LOG_LEVEL` - Logging level (debug/info/error)
+* `PORT` – Server port (default: `8080`)
+* `ENVIRONMENT` – Environment mode (`development` / `production`)
+* `ALLOWED_ORIGINS` – CORS allowed origins
+* `DATABASE_URL` – Path to SQLite file (default: `riseapp.db`)
+* `JWT_SECRET` – Secret key for JWT tokens
+* `LOG_LEVEL` – Logging level (`debug` / `info` / `error`)
 
-## API Endpoints
+## Architecture Overview
 
-### Health Check
-```
-GET /health
-```
+1. **API Layer**
 
-### API Root
-```
-GET /api/v1/
-```
-
-## Development
-
-### Code Organization
-
-- `cmd/` - Application entry points
-- `internal/` - Private application code (not importable by other projects)
-- `pkg/` - Public libraries (can be imported by other projects)
-- `api/` - API specifications and documentation
-
-### Adding New Features
-
-1. Create handlers in `internal/handlers/`
-2. Add routes in `cmd/server/main.go`
-3. Update API documentation in `api/`
-
-## Testing
-
-Run tests:
-```bash
-go test ./...
-```
-
-Run tests with coverage:
-```bash
-go test -cover ./...
-```
-
-## Building for Production
-
-```bash
-CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -o bin/server cmd/server/main.go
-```
+   * Serves JSON to the frontend
+   * Fast, read-heavy queries
 
 ## License
 

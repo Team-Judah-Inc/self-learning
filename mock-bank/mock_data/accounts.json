@@ -1,0 +1,47 @@
+[
+  {
+    "account_id": "acc_1",
+    "user_id": "u_1",
+    "type": "CHECKING",
+    "currency": "USD",
+    "balance": 9493.23,
+    "salary_amount": 4900,
+    "status": "ACTIVE"
+  },
+  {
+    "account_id": "acc_2",
+    "user_id": "u_2",
+    "type": "CHECKING",
+    "currency": "USD",
+    "balance": 9450.759999999998,
+    "salary_amount": 8100,
+    "status": "ACTIVE"
+  },
+  {
+    "account_id": "acc_3",
+    "user_id": "u_3",
+    "type": "CHECKING",
+    "currency": "USD",
+    "balance": 9597.81,
+    "salary_amount": 5600,
+    "status": "ACTIVE"
+  },
+  {
+    "account_id": "acc_4",
+    "user_id": "u_4",
+    "type": "CHECKING",
+    "currency": "USD",
+    "balance": 7249.39,
+    "salary_amount": 3000,
+    "status": "ACTIVE"
+  },
+  {
+    "account_id": "acc_5",
+    "user_id": "u_5",
+    "type": "CHECKING",
+    "currency": "USD",
+    "balance": 7242.3,
+    "salary_amount": 4400,
+    "status": "ACTIVE"
+  }
+]

@@ -1,0 +1,64 @@
+{
+  "probabilities": {
+    "home_location_chance": 0.9,
+    "categories": {
+      "Food & Dining": 0.3,
+      "Shopping": 0.2,
+      "Transport": 0.15,
+      "Entertainment": 0.1,
+      "Health & Wellness": 0.1,
+      "Travel": 0.05,
+      "Utilities": 0.1
+    }
+  },
+  "financial": {
+    "initial_balance_range": [
+      1000,
+      5000
+    ],
+    "salary_range": [
+      3000,
+      9000
+    ],
+    "default_credit_limit": 5000,
+    "manual_transaction_default": -10.0,
+    "transfer_default_amount": 50.0
+  },
+  "time": {
+    "payroll_days": [
+      1,
+      15
+    ],
+    "billing_cycle_options": [
+      1,
+      10,
+      15
+    ],
+    "card_expiry_years": 3
+  },
+  "behavior": {
+    "spending_profiles": {
+      "FRUGAL": {
+        "prob": 0.1,
+        "mean": 15.0,
+        "std": 5.0,
+        "min": 2.0,
+        "max": 60.0
+      },
+      "AVERAGE": {
+        "prob": 0.4,
+        "mean": 45.0,
+        "std": 20.0,
+        "min": 5.0,
+        "max": 200.0
+      },
+      "SPENDER": {
+        "prob": 0.7,
+        "mean": 120.0,
+        "std": 80.0,
+        "min": 10.0,
+        "max": 800.0
+      }
+    }
+  }
+}

@@ -1,0 +1,41 @@
+package database
+
+import (
+	"log"
+
+	"github.com/self-learning/backend/internal/models"
+	"gorm.io/driver/sqlite"
+	"gorm.io/gorm"
+	"gorm.io/gorm/logger"
+)
+
+func Connect(dbName string) *gorm.DB {
+	if dbName == "" {
+		dbName = "riseapp.db"
+	}
+
+	// 1. Open Connection
+	db, err := gorm.Open(sqlite.Open(dbName), &gorm.Config{
+		Logger: logger.Default.LogMode(logger.Info),
+	})
+	if err != nil {
+		log.Fatal("Failed to connect to database:", err)
+	}
+
+	// 2. Enable WAL Mode for concurrency
+	db.Exec("PRAGMA journal_mode=WAL;")
+
+	// 3. Auto Migrate
+	log.Println("Running Database Migrations...")
+	err = db.AutoMigrate(
+		&models.Account{},
+		&models.Transaction{},
+		&models.User{},
+	)
+	if err != nil {
+		log.Fatal("Migration failed:", err)
+	}
+	log.Println("Database Migration Complete!")
+
+	return db
+}
