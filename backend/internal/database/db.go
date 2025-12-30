@@ -2,6 +2,8 @@ package database
 
 import (
 	"log"
+	"os"
+	"path/filepath"
 
 	"github.com/self-learning/backend/internal/models"
 	"gorm.io/driver/sqlite"
@@ -14,7 +16,15 @@ func Connect(dbName string) *gorm.DB {
 		dbName = "riseapp.db"
 	}
 
-	// 1. Open Connection
+	// 1. Ensure directory exists
+	dbDir := filepath.Dir(dbName)
+	if dbDir != "." && dbDir != "" {
+		if err := os.MkdirAll(dbDir, 0755); err != nil {
+			log.Fatalf("Failed to create database directory %s: %v", dbDir, err)
+		}
+	}
+
+	// 2. Open Connection
 	db, err := gorm.Open(sqlite.Open(dbName), &gorm.Config{
 		Logger: logger.Default.LogMode(logger.Info),
 	})
@@ -22,10 +32,10 @@ func Connect(dbName string) *gorm.DB {
 		log.Fatal("Failed to connect to database:", err)
 	}
 
-	// 2. Enable WAL Mode for concurrency
+	// 3. Enable WAL Mode for concurrency
 	db.Exec("PRAGMA journal_mode=WAL;")
 
-	// 3. Auto Migrate
+	// 4. Auto Migrate
 	log.Println("Running Database Migrations...")
 	err = db.AutoMigrate(
 		&models.Account{},
