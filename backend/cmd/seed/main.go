@@ -38,5 +38,24 @@ func main() {
 	}
 
 	log.Printf("🌱 Seeded Account: %s (Status: PENDING_SYNC)", newAccount.ID)
+
+	// 4. Seed a dummy transaction
+	newTransaction := models.Transaction{
+		ID:                    "txn-test-001",
+		AccountID:             newAccount.ID,
+		ProviderTransactionID: "prov-txn-001",
+		Amount:                -150.50,
+		Currency:              "ILS",
+		Description:           "Supermarket Purchase",
+		MerchantName:          "Super Sal",
+		Category:              "Groceries",
+		TransactionDate:       time.Now().Add(-24 * time.Hour), // Yesterday
+	}
+
+	if err := db.Save(&newTransaction).Error; err != nil {
+		log.Fatalf("❌ Failed to seed transaction: %v", err)
+	}
+
+	log.Printf("🌱 Seeded Transaction: %s for Account: %s", newTransaction.ID, newAccount.ID)
 	log.Println("🚀 Run 'go run cmd/server/main.go' to see the Fetcher pick it up!")
 }
