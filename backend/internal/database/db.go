@@ -40,7 +40,6 @@ func Connect(dbName string) *gorm.DB {
 	err = db.AutoMigrate(
 		&models.Account{},
 		&models.Transaction{},
-		&models.User{},
 	)
 	if err != nil {
 		log.Fatal("Migration failed:", err)
