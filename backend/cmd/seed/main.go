@@ -4,13 +4,15 @@ import (
 	"log"
 	"time"
 
+	"github.com/self-learning/backend/internal/config"
 	"github.com/self-learning/backend/internal/database"
 	"github.com/self-learning/backend/internal/models"
 )
 
 func main() {
-	// 1. Connect to DB
-	db := database.Connect("riseapp.db")
+	// 1. Load config and connect to DB
+	cfg := config.Load()
+	db := database.Connect(cfg.DatabasePath)
 
 	// 2. Define a dummy account that needs syncing
 	newAccount := models.Account{
