@@ -34,7 +34,8 @@ build/
 *.log
 
 # Local blob storage
-/storage/
+storage/
+backend/storage/
 
 # mock bank venv
 /mock-bank/venv/
