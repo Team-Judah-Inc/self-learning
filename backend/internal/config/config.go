@@ -22,7 +22,7 @@ func Load() *Config {
 		Port:         getEnv("PORT", "8080"),
 		Environment:  getEnv("ENVIRONMENT", "development"),
 		JWTSecret:    getEnv("JWT_SECRET", "your-secret-key-change-in-production"),
-		DatabasePath: getEnv("DATABASE_PATH", "riseapp.db"),
+		DatabasePath: getEnv("DATABASE_PATH", "backend/data/riseapp.db"),
 		DBHost:       getEnv("DB_HOST", "localhost"),
 		DBPort:       getEnv("DB_PORT", "5432"),
 		DBUser:       getEnv("DB_USER", "postgres"),

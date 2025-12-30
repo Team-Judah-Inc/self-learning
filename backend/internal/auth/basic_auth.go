@@ -1,7 +1,7 @@
 package auth
 
-// User represents a user for authentication
-type User struct {
+// AuthUser represents a user for authentication (lightweight)
+type AuthUser struct {
 	Username string
 	Password string
 }
@@ -15,14 +15,14 @@ var validUsers = map[string]string{
 }
 
 // ValidateCredentials validates username and password and returns user info
-func ValidateCredentials(username, password string) (*User, bool) {
+func ValidateCredentials(username, password string) (*AuthUser, bool) {
 	storedPassword, exists := validUsers[username]
 	if !exists {
 		return nil, false
 	}
 
 	if storedPassword == password {
-		return &User{Username: username}, true
+		return &AuthUser{Username: username}, true
 	}
 
 	return nil, false
