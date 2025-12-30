@@ -7,7 +7,6 @@ import (
 )
 
 type Handler struct {
-	authService    *services.AuthService
 	accountService *services.AccountService
 	startTime      time.Time
 }
