@@ -5,22 +5,52 @@ Go backend service for the self-learning application.
 ## Project Structure
 
 ```
-backend/
+self-learning/backend/
 ├── cmd/
 │   └── server/
-│       └── main.go          # Application entry point
-├── internal/
+│       └── main.go              # Application entry point
+├── internal/                    # Private application code
 │   ├── config/
-│   │   └── config.go        # Configuration management
-│   └── handlers/
-│       └── handlers.go      # HTTP handlers
-├── pkg/
-│   └── logger/
-│       └── logger.go        # Logging utilities
-├── api/                     # API specifications (OpenAPI/Swagger)
-├── go.mod                   # Go module definition
-├── go.sum                   # Go module checksums
-└── .env.example             # Environment variables template
+│   │   └── config.go           # Configuration management
+│   ├── server/
+│   │   ├── server.go           # Server setup and routing
+│   │   └── middleware.go       # Middleware functions
+│   ├── handlers/               # HTTP handlers (controllers)
+│   │   ├── health.go
+│   │   ├── auth.go
+│   │   └── user.go
+│   ├── services/               # Business logic layer
+│   │   ├── auth_service.go
+│   │   └── user_service.go
+│   ├── repository/             # Data access layer
+│   │   ├── interfaces.go
+│   │   ├── user_repo.go
+│   │   └── memory/
+│   │       └── user_memory.go
+│   ├── models/                 # Domain models/entities
+│   │   ├── user.go
+│   │   ├── auth.go
+│   │   └── response.go
+│   └── auth/                   # Authentication logic
+│       ├── auth.go
+│       └── middleware.go
+├── pkg/                        # Public libraries
+│   ├── logger/
+│   │   └── logger.go
+│   ├── validator/
+│   │   └── validator.go
+│   └── errors/
+│       └── errors.go
+├── api/                        # API documentation
+│   └── openapi.yaml
+├── migrations/                 # Database migrations
+├── scripts/                    # Build and deployment scripts
+├── docker/                     # Docker files
+│   └── Dockerfile
+├── go.mod
+├── go.sum
+└── README.md
+
 ```
 
 ## Getting Started
