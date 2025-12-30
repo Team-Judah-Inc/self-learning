@@ -1,8 +1,8 @@
 # Self-Learning Backend
 
-Go backend service for the Finance MVP application.
+Go backend service for the Self-Learning application.
 
-This uses a **Monolithic Architecture** that runs both the **API Server** (Read Layer) and the **Background Sync Engine** (Write Layer) in a single binary.
+A clean, modular HTTP server with authentication, middleware, and structured logging.
 
 ## Project Structure
 
@@ -10,36 +10,51 @@ This uses a **Monolithic Architecture** that runs both the **API Server** (Read 
 backend/
 ├── cmd/
 │   └── server/
-│       └── main.go          # Entrypoint: Starts API + Fetcher/Normalizer Workers
+│       └── main.go          # Application entrypoint
 ├── internal/
-│   ├── api/                 # HTTP Layer
-│   │   ├── handlers/        # Controllers (GET /transactions, etc.)
-│   │   ├── middleware/      # Auth & Logging
-│   │   └── routes.go        # Router Setup
+│   ├── auth/                # Authentication logic
+│   │   ├── basic_auth.go    # Basic auth validation
+│   │   └── jwt.go           # JWT token handling
 │   │
-│   ├── worker/              # The Sync Engine (Background Jobs)
-│   │   ├── fetcher.go       # Loop A: Pulls from Bank -> S3 -> Queue
-│   │   └── normalizer.go    # Loop B: Reads Queue -> DB (Deduplication)
+│   ├── config/              # Configuration management
+│   │   └── config.go        # Environment-based config
 │   │
-│   ├── models/              # Shared Data Structs (User, Account, Transaction)
-│   ├── database/            # SQLite Connection & GORM AutoMigrate
-│   └── config/              # Configuration management
+│   ├── handlers/            # HTTP request handlers
+│   │   ├── handlers.go      # Main handlers
+│   │   ├── auth.go          # Auth endpoints
+│   │   └── health.go        # Health check endpoint
+│   │
+│   ├── middleware/          # HTTP middleware
+│   │   ├── auth.go          # Authentication middleware
+│   │   ├── context.go       # Context utilities
+│   │   ├── cors.go          # CORS configuration
+│   │   └── recovery.go      # Panic recovery
+│   │
+│   ├── models/              # Data models
+│   │   ├── auth.go          # Auth-related models
+│   │   ├── response.go      # API response structures
+│   │   └── user.go          # User models
+│   │
+│   ├── server/              # HTTP server setup
+│   │   └── server.go        # Server initialization & routing
+│   │
+│   └── services/            # Business logic layer
+│       ├── services.go      # Service interfaces
+│       └── auth_service.go  # Authentication service
 │
 ├── pkg/
-│   └── logger/              # Logging utilities
-├── go.mod                   # Dependencies
-├── go.sum                   # Checksums
-└── .env.example             # Env var template
-````
+│   └── logger/              # Structured logging utilities
+│       └── logger.go
+├── go.mod                   # Go module dependencies
+├── go.sum                   # Dependency checksums
+└── .env.example             # Environment variables template
+```
 
 ## Getting Started
 
 ### Prerequisites
 
 * **Go 1.21** or higher
-* **VS Code Extension:**
-  [SQLite Viewer](https://marketplace.visualstudio.com/items?itemName=qwtel.sqlite-viewer)
-  (Recommended for viewing `riseapp.db` locally)
 
 ### Installation
 
@@ -55,7 +70,7 @@ backend/
    cp .env.example .env
    ```
 
-3. Install dependencies (including GORM & SQLite driver):
+3. Install dependencies:
 
    ```bash
    go mod tidy
@@ -63,34 +78,18 @@ backend/
 
 ### Running the Server
 
-**Development Mode**
-Starts the API on port `8080` **and** the background workers (Fetcher/Normalizer):
+Start the HTTP server on port `8080`:
 
 ```bash
 go run cmd/server/main.go
 ```
 
-To populate the database with a test account run:
-```bash
-go run cmd/seed/main.go
-```
-
----
-
-## Database Inspection (Local) 🗄️
-
-This project uses an embedded **SQLite** database (`riseapp.db`).
-It runs in **WAL Mode** (Write-Ahead Logging) for high concurrency.
-
-### How to view data
-
-1. Install the **SQLite Viewer** extension in VS Code.
-2. In the file explorer, click on `riseapp.db`.
-3. Browse the `users`, `accounts`, and `transactions` tables.
-4. **Note:** You may see `riseapp.db-wal` or `riseapp.db-shm` files.
-   Do **not** delete them — they are temporary consistency files managed by SQLite.
-
----
+The server will start with:
+- Health check endpoint at `/health`
+- CORS middleware configured
+- Panic recovery middleware
+- Request logging
+- Basic authentication for protected routes
 
 ## Environment Variables
 
@@ -98,17 +97,31 @@ See `.env.example` for all available configuration options:
 
 * `PORT` – Server port (default: `8080`)
 * `ENVIRONMENT` – Environment mode (`development` / `production`)
-* `ALLOWED_ORIGINS` – CORS allowed origins
-* `DATABASE_URL` – Path to SQLite file (default: `riseapp.db`)
-* `JWT_SECRET` – Secret key for JWT tokens
-* `LOG_LEVEL` – Logging level (`debug` / `info` / `error`)
+* `ALLOWED_ORIGINS` – CORS allowed origins (comma-separated)
+* `JWT_SECRET` – Secret key for JWT token signing
+* `LOG_LEVEL` – Logging level (`debug` / `info` / `warn` / `error`)
 
-## Architecture Overview
+## Features
 
-1. **API Layer**
+* **Clean Architecture** – Separation of concerns with handlers, services, and middleware
+* **Authentication** – Basic auth and JWT token support
+* **Middleware Stack** – CORS, recovery, logging, and authentication
+* **Structured Logging** – JSON-formatted logs with configurable levels
+* **Health Checks** – Built-in health endpoint for monitoring
+* **Environment-based Config** – Flexible configuration via environment variables
 
-   * Serves JSON to the frontend
-   * Fast, read-heavy queries
+## API Endpoints
+
+* `GET /health` – Health check endpoint (public)
+* Protected routes require Basic Authentication with credentials from `internal/auth/basic_auth.go`
+
+## Development
+
+The project follows Go best practices:
+- Clean separation between handlers, services, and middleware
+- Dependency injection for testability
+- Structured error handling
+- Context-based request scoping
 
 ## License
 
