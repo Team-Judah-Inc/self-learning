@@ -1,0 +1,2 @@
+uiServiceType: NodePort
+imagePullPolicy: IfNotPresent
