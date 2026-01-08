@@ -1,0 +1,10 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: api-two-service
+spec:
+  selector:
+    app: api-two
+  ports:
+    - port: 80
+      targetPort: 80
