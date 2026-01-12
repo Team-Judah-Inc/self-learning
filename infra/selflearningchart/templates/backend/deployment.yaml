@@ -3,7 +3,7 @@ kind: Deployment
 metadata:
   name: backend-one
 spec:
-  replicas: 1
+  replicas: {{ .Values.backendreplicacount}}
   selector:
     matchLabels:
       app: backend-one
@@ -14,5 +14,9 @@ spec:
     spec:
       containers:
       - name: worker
+        image: backendimage:1.0.2
+        imagePullPolicy: {{ .Values.imagePullPolicy }}
+      - name: worker2
         image: alpine
-        command: ["sh", "-c", "while true; do echo I am working; sleep 5; done"]
+        command: [ "sh", "-c", "while true; do echo I am working; sleep 5; done" ]
+        imagePullPolicy: {{ .Values.imagePullPolicy }}

@@ -1,2 +1,3 @@
 uiServiceType: NodePort
 imagePullPolicy: IfNotPresent
+backendreplicacount: 1
