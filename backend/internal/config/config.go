@@ -7,7 +7,7 @@ import (
 type Config struct {
 	Port         string
 	Environment  string
-	JWTSecret    string
+	SupabaseURL  string
 	DatabasePath string
 	DBHost       string
 	DBPort       string
@@ -19,16 +19,16 @@ type Config struct {
 
 func Load() *Config {
 	return &Config{
-		Port:         getEnv("PORT", "8080"),
-		Environment:  getEnv("ENVIRONMENT", "development"),
-		JWTSecret:    getEnv("JWT_SECRET", "your-secret-key-change-in-production"),
-		DatabasePath: getEnv("DATABASE_PATH", "data/riseapp.db"),
-		DBHost:       getEnv("DB_HOST", "localhost"),
-		DBPort:       getEnv("DB_PORT", "5432"),
-		DBUser:       getEnv("DB_USER", "postgres"),
-		DBPassword:   getEnv("DB_PASSWORD", ""),
-		DBName:       getEnv("DB_NAME", "selflearning"),
-		LogLevel:     getEnv("LOG_LEVEL", "info"),
+		Port:				getEnv("PORT", "8080"),
+		Environment:		getEnv("ENVIRONMENT", "development"),
+		SupabaseURL:        getEnv("SUPABASE_URL", "https://ydammfcteyzvcaquajqp.supabase.co"),
+		DatabasePath: 		getEnv("DATABASE_PATH", "data/riseapp.db"),
+		DBHost:       		getEnv("DB_HOST", "localhost"),
+		DBPort:       		getEnv("DB_PORT", "5432"),
+		DBUser:       		getEnv("DB_USER", "postgres"),
+		DBPassword:   		getEnv("DB_PASSWORD", ""),
+		DBName:       		getEnv("DB_NAME", "selflearning"),
+		LogLevel:     		getEnv("LOG_LEVEL", "info"),
 	}
 }
 

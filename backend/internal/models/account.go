@@ -18,7 +18,7 @@ const (
 
 type Account struct {
 	ID       string `gorm:"primaryKey;type:string"` // UUID
-	UserID   string `gorm:"index"`
+	UserID string `gorm:"index;not null" json:"-"` // Foreign Key
 	Provider string // e.g., "leumi", "visa"
 
 	ExternalAccountID string `gorm:"uniqueIndex"`

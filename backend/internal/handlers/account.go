@@ -18,16 +18,11 @@ func (h *Handler) GetUserAccounts(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Get accounts from service
-	accounts, err := h.accountService.GetUserAccounts(user.Username)
+	accounts, err := h.accountService.GetUserAccounts(user.ID)
 	if err != nil {
-		// Handle specific error types
-		if errors.Is(err, services.ErrNotFound) {
-			respondNotFound(w, "No accounts found for user")
-			return
-		}
-		respondInternalError(w, "Failed to retrieve accounts")
-		return
-	}
+        respondInternalError(w, "Failed to retrieve accounts")
+        return
+    }
 
 	// Return accounts directly (best practice for simple lists)
 	respondOK(w, accounts)
@@ -50,7 +45,7 @@ func (h *Handler) GetAccountTransactions(w http.ResponseWriter, r *http.Request)
 	}
 
 	// Get transactions
-	transactions, err := h.accountService.GetAccountTransactions(user.Username, accountID)
+	transactions, err := h.accountService.GetAccountTransactions(user.ID, accountID)
 	if err != nil {
 		if errors.Is(err, services.ErrNotFound) {
 			respondNotFound(w, "Account not found")

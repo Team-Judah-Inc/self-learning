@@ -1,0 +1,145 @@
+openapi: 3.0.3
+info:
+  title: Self-Learning Budgeting App API
+  description: |
+    # Authentication Guide
+    This API uses **Supabase Auth**. You cannot call these endpoints without a valid JWT.
+
+    ## How to get a Token (CLI / Postman)
+    To get a token for testing, send a POST request to Supabase directly:
+    
+    ```bash
+    curl -X POST 'https://ydammfcteyzvcaquajqp.supabase.co/auth/v1/token?grant_type=password' \
+      -H "apikey: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InlkYW1tZmN0ZXl6dmNhcXVhanFwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njc3MTQ0MTMsImV4cCI6MjA4MzI5MDQxM30.gsCq_zcjFWf8LszeGkW4GzGdqBGHdFiGpch63_-ijsA" \
+      -H "Content-Type: application/json" \
+      -d '{ "email": "test@test.com", "password": "test" }'
+    ```
+
+    Take the `access_token` from that response and use it in the **Authorize** button above (Format: `Bearer <token>`).
+  version: 1.0.0
+  contact:
+    name: Backend Team
+
+servers:
+  - url: http://localhost:8080
+    description: Local Development Server
+
+# ---------------------------------------------------------
+# Security Configuration
+# ---------------------------------------------------------
+components:
+  securitySchemes:
+    # This defines that we expect a "Bearer" token in the header
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      description: "Paste the Supabase access_token here."
+
+  schemas:
+    Account:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          example: "a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11"
+        provider:
+          type: string
+          example: "MockBank"
+        type:
+          type: string
+          example: "checking"
+        balance:
+          type: number
+          format: float
+          example: 1250.50
+        currency:
+          type: string
+          example: "USD"
+
+    Transaction:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        amount:
+          type: number
+          example: -45.00
+        merchant_name:
+          type: string
+          example: "Starbucks"
+        transaction_date:
+          type: string
+          format: date-time
+
+# ---------------------------------------------------------
+# API Endpoints
+# ---------------------------------------------------------
+paths:
+  # Public Route
+  /health:
+    get:
+      summary: Health Check
+      description: Returns the status of the server. No auth required.
+      security: [] # Explicitly disable auth for this endpoint
+      responses:
+        '200':
+          description: Server is healthy
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: "healthy"
+                  uptime:
+                    type: string
+
+  # Protected Routes
+  /api/v1/accounts:
+    get:
+      summary: Get User Accounts
+      description: Retrieves all bank accounts linked to the authenticated user.
+      security:
+        - BearerAuth: [] # Requires the token
+      responses:
+        '200':
+          description: Successful list of accounts
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Account'
+        '401':
+          description: Unauthorized (Token missing or invalid)
+        '500':
+          description: Internal Server Error
+
+  /api/v1/accounts/{accountID}/transactions:
+    get:
+      summary: Get Account Transactions
+      description: Fetch transactions for a specific account.
+      security:
+        - BearerAuth: []
+      parameters:
+        - in: path
+          name: accountID
+          schema:
+            type: string
+          required: true
+          description: The ID of the account to fetch
+      responses:
+        '200':
+          description: List of transactions
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Transaction'
+        '404':
+          description: Account not found or does not belong to user
