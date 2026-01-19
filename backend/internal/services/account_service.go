@@ -33,11 +33,6 @@ func (s *AccountService) GetUserAccounts(userID string) ([]models.Account, error
 		return nil, err
 	}
 
-	// Check if result is empty
-	if len(accounts) == 0 {
-		return nil, ErrNotFound
-	}
-
 	return accounts, nil
 }
 
