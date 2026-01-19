@@ -1,5 +1,6 @@
 from flask import Blueprint, jsonify, request, current_app, abort
-from app.utils import load_table, paginate, parse_date
+from app.utils import paginate, parse_date
+from app.repository import get_repository
 from app.auth import check_auth
 from app import limiter
 
@@ -27,15 +28,14 @@ def get_card_details(current_user, card_id):
       404:
         description: Card not found
     """
-    cards = load_table('cards')
-    card = next((c for c in cards if c['card_id'] == card_id), None)
+    repo = get_repository()
+    card = repo.get_card_by_id(card_id)
     
     if not card:
         abort(404)
-    
+        
     # Ownership check: Find the account linked to the card and verify user_id
-    accounts = load_table('accounts')
-    account = next((a for a in accounts if a['account_id'] == card['account_id']), None)
+    account = repo.get_account_by_id(card['account_id'])
     
     if not account or account['user_id'] != current_user['user_id']:
         return jsonify({"error": "Access Denied"}), 403
@@ -83,43 +83,57 @@ def get_card_transactions(current_user, card_id):
         description: Access Denied
     """
     # Authorization: Ensure the card belongs to the user
-    cards = load_table('cards')
-    card = next((c for c in cards if c['card_id'] == card_id), None)
+    repo = get_repository()
+    card = repo.get_card_by_id(card_id)
     if not card:
         abort(404)
         
-    accounts = load_table('accounts')
-    account = next((a for a in accounts if a['account_id'] == card['account_id']), None)
+    account = repo.get_account_by_id(card['account_id'])
     if not account or account['user_id'] != current_user['user_id']:
         return jsonify({"error": "Access Denied"}), 403
 
-    # Load and filter transactions
-    all_transactions = load_table('transactions')
-    card_txns = [t for t in all_transactions if t.get('card_id') == card_id]
+    # Pagination Params
+    try:
+        limit = int(request.args.get('limit', current_app.config['DEFAULT_PAGE_SIZE']))
+        page = int(request.args.get('page', 1))
+    except ValueError:
+        limit = current_app.config['DEFAULT_PAGE_SIZE']
+        page = 1
+        
+    max_limit = current_app.config['MAX_PAGE_SIZE']
+    limit = max(1, min(limit, max_limit))
+    page = max(1, page)
+    offset = (page - 1) * limit
 
-    # Date Filters
+    # Parse Filters
     start_str = request.args.get('start_date')
     end_str = request.args.get('end_date')
+    min_amount_str = request.args.get('min_amount')
     
-    if start_str and parse_date(start_str):
-        card_txns = [t for t in card_txns if parse_date(t['date']) >= parse_date(start_str)]
-    if end_str and parse_date(end_str):
-        card_txns = [t for t in card_txns if parse_date(t['date']) <= parse_date(end_str)]
+    min_amount = None
+    if min_amount_str:
+        try: min_amount = float(min_amount_str)
+        except ValueError: pass
 
-    # Amount Filter
-    min_amount = request.args.get('min_amount')
-    if min_amount:
-        try:
-            limit_val = float(min_amount)
-            card_txns = [t for t in card_txns if abs(t['amount']) >= limit_val]
-        except ValueError:
-            pass
+    # Fetch Filtered Data
+    transactions = repo.get_transactions_by_card_filtered(
+        card_id,
+        start_date=start_str if start_str and parse_date(start_str) else None,
+        end_date=end_str if end_str and parse_date(end_str) else None,
+        min_amount=min_amount,
+        limit=limit,
+        offset=offset
+    )
 
-    # Pagination
-    results, meta = paginate(card_txns)
+    meta = {
+        "page": page,
+        "limit": limit,
+        "has_next": len(transactions) == limit,
+        "has_prev": page > 1
+    }
 
     return jsonify({
         "card_id": card_id,
         "meta": meta,
-        "transactions": results
+        "transactions": transactions
     })

@@ -9,10 +9,10 @@ from werkzeug.security import generate_password_hash
 sys.path.append(os.getcwd())
 
 from app import create_app
-from data_gen import JsonRepository
+from data_gen import SqlRepository
 
 # Config
-TEST_DB_DIR = 'test_api_data'
+TEST_DB_URI = 'sqlite:///test_api.db'
 
 class TestBankingAPI(unittest.TestCase):
 
@@ -24,13 +24,11 @@ class TestBankingAPI(unittest.TestCase):
         3. Seed data.
         """
         # 1. Setup Temp Directory
-        if os.path.exists(TEST_DB_DIR):
-            try: shutil.rmtree(TEST_DB_DIR)
-            except OSError: pass
-        os.makedirs(TEST_DB_DIR)
+        if os.path.exists('test_api.db'):
+            os.remove('test_api.db')
 
         # 2. Seed Initial Data using DataGen Repository
-        self.repo = JsonRepository(TEST_DB_DIR)
+        self.repo = SqlRepository(TEST_DB_URI)
         
         self.test_user = {
             "user_id": "u_test",
@@ -59,14 +57,19 @@ class TestBankingAPI(unittest.TestCase):
         # 3. Create App & Override Config
         self.app = create_app()
         self.app.config['TESTING'] = True
-        self.app.config['DATA_DIR'] = TEST_DB_DIR  # Point app to test folder
+        self.app.config['DB_TYPE'] = 'sqlite'
+        self.app.config['SQLALCHEMY_DATABASE_URI'] = TEST_DB_URI
         self.client = self.app.test_client()
+        
+        # Reset singleton for tests
+        from app.repository import _repo_instance
+        import app.repository
+        app.repository._repo_instance = None
 
     def tearDown(self):
         """Cleanup after tests."""
-        if os.path.exists(TEST_DB_DIR):
-            try: shutil.rmtree(TEST_DB_DIR)
-            except OSError: pass
+        if os.path.exists('test_api.db'):
+            os.remove('test_api.db')
 
     # ==========================================
     # --- AUTHENTICATION TESTS ---

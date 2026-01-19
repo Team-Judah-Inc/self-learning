@@ -142,34 +142,70 @@ def process_transfer(sim: BankingSimulation, sender_id: str, receiver_id: str, o
     receiver.post_transaction(amt, f"Transfer from {sender_id}", "Transfer", "Online", date, "CREDIT", grp_id)
     print(f"✅ Transferred ${amt:.2f}")
 
-def run_simulation_loop(sim: BankingSimulation, days: int, process_only: bool = False):
-    start = datetime.date.fromisoformat(sim.metadata['current_date'])
-    end = start + datetime.timedelta(days=days)
+def run_simulation_loop(sim: BankingSimulation, days: int = 0, hours: int = 0, process_only: bool = False):
+    # Load current time, defaulting to midnight if only date is stored
+    try:
+        start = datetime.datetime.fromisoformat(sim.metadata['current_date'])
+    except ValueError:
+        start = datetime.datetime.fromisoformat(sim.metadata['current_date'] + "T00:00:00")
+        
+    delta = datetime.timedelta(days=days, hours=hours)
+    end = start + delta
     print(f"⏳ Advancing {start} -> {end}...")
+
+    # Stats tracking
+    stats = {
+        "users_added": 0, # Currently simulation doesn't add users automatically, but good to have
+        "accounts_added": 0,
+        "cards_added": 0,
+        "transactions_added": 0
+    }
+    
+    initial_txn_count = len(sim.account_txns) + len(sim.card_txns)
 
     curr = start
     while curr < end:
-        curr += datetime.timedelta(days=1)
-        d_str = curr.isoformat()
+        # Advance by 1 hour step
+        next_step = curr + datetime.timedelta(hours=1)
+        if next_step > end:
+            next_step = end
+            
+        # Check if we crossed a day boundary (for daily events like payroll)
+        new_day = next_step.date() > curr.date()
+        curr = next_step
+        d_str = curr.isoformat() # ISO format includes time now
         
         for acc in sim.accounts:
-            # Payroll
-            if curr.day in sim.config['time']['payroll_days']:
-                amt = acc.salary_amount / len(sim.config['time']['payroll_days'])
-                acc.post_transaction(amt, f"Payroll - {get_consistent_company(acc.user_id)}", "Income", "Direct Deposit", d_str, "CREDIT")
+            # Payroll (Triggered once per day, e.g., at 9 AM)
+            if new_day and curr.day in sim.config['time']['payroll_days']:
+                 # We can randomize the hour slightly or stick to 9 AM
+                 amt = acc.salary_amount / len(sim.config['time']['payroll_days'])
+                 acc.post_transaction(amt, f"Payroll - {get_consistent_company(acc.user_id)}", "Income", "Direct Deposit", d_str, "CREDIT")
 
             my_cards = [c for c in sim.cards if c.account_id == acc.account_id]
             for card in my_cards:
-                # Spending
+                # Spending (Hourly Simulation)
+                # We simulate a transaction opportunity every single hour.
                 if not process_only:
                     habit = sim.config['behavior']['spending_profiles'].get(card.spending_profile, sim.config['behavior']['spending_profiles']['AVERAGE'])
-                    if random.random() < habit['prob']:
+                    
+                    # Use the hourly probability directly from config
+                    hourly_prob = habit['prob']
+                    
+                    # Check if a transaction occurs this hour
+                    if random.random() < hourly_prob:
                         raw_amt = random.gauss(habit['mean'], habit['std'])
                         amt = round(max(habit['min'], min(habit['max'], raw_amt)), 2)
                         card.charge(-amt, fake.company(), pick_weighted_category(sim.config), pick_location(acc.owner.city, sim.config), d_str)
-                # Bill Pay
-                if curr.day == card.billing_day:
+                
+                # Bill Pay (Triggered once per day)
+                if new_day and curr.day == card.billing_day:
                     card.pay_bill(d_str)
 
     sim.metadata['current_date'] = end.isoformat()
+    
+    final_txn_count = len(sim.account_txns) + len(sim.card_txns)
+    stats['transactions_added'] = final_txn_count - initial_txn_count
+    
     print("✅ Time Travel Complete.")
+    return stats
