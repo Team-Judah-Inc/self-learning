@@ -8,9 +8,10 @@ import datetime
 # We now import from the 'data_gen' folder
 try:
     from data_gen import (
-        BankingSimulation, 
-        JsonRepository, 
-        run_simulation_loop, 
+        BankingSimulation,
+        JsonRepository,
+        SqlRepository,
+        run_simulation_loop,
         process_manual_transaction, 
         process_transfer,
         DATA_DIR
@@ -58,7 +59,7 @@ def show_main_menu(current_date):
     print(f"{CYAN}Current Date:{RESET} {YELLOW}{current_date}{RESET}")
     print(f"\n{BOLD}Main Actions:{RESET}")
     print(f"  {BOLD}{GREEN}[1]{RESET} Initialize World (Wipe & Reset)")
-    print(f"  {BOLD}{GREEN}[2]{RESET} Evolve Time (Advance Days)")
+    print(f"  {BOLD}{GREEN}[2]{RESET} Evolve Time (Advance Days/Hours)")
     print(f"  {BOLD}{GREEN}[3]{RESET} View Balances & Stats")
     print(f"  {BOLD}{GREEN}[4]{RESET} Manual Management (Users/Transactions)")
     print(f"  {BOLD}{RED}[ESC]{RESET} Exit System")
@@ -85,7 +86,14 @@ def display_balances(bank: BankingSimulation):
 
 def run_app():
     # 1. Initialize the V4.0 Architecture
-    repo = JsonRepository(DATA_DIR)
+    from config import Config
+    if Config.DB_TYPE == 'sqlite' or 'sql' in Config.DB_TYPE:
+        print(f"{BOLD}{YELLOW}Using SQL Repository ({Config.SQLALCHEMY_DATABASE_URI}){RESET}")
+        repo = SqlRepository(Config.SQLALCHEMY_DATABASE_URI)
+    else:
+        print(f"{BOLD}{YELLOW}Using JSON Repository ({DATA_DIR}){RESET}")
+        repo = JsonRepository(DATA_DIR)
+        
     bank = BankingSimulation(repo)
     
     # 2. Load Data
@@ -133,10 +141,30 @@ def run_app():
 
         # 2. EVOLVE
         elif choice == "2":
-            days_str = input(f"\n{BOLD}Enter number of days to advance: {RESET}")
+            print(f"\n{BOLD}Evolve Time:{RESET}")
+            print("  [D] Days")
+            print("  [H] Hours")
+            mode = get_single_key_input("Select Mode: ").lower()
+            
             try:
-                days = int(days_str)
-                run_simulation_loop(bank, days)
+                stats = {}
+                if mode == 'd':
+                    val = int(input(f"\n{BOLD}Enter number of days: {RESET}"))
+                    stats = run_simulation_loop(bank, days=val)
+                elif mode == 'h':
+                    val = int(input(f"\n{BOLD}Enter number of hours: {RESET}"))
+                    stats = run_simulation_loop(bank, hours=val)
+                else:
+                    print(f"{RED}Invalid mode.{RESET}")
+                
+                if stats:
+                    print(f"\n{BOLD}{GREEN}--- Simulation Stats ---{RESET}")
+                    print(f"Transactions Generated: {stats.get('transactions_added', 0)}")
+                    print(f"Users Added: {stats.get('users_added', 0)}")
+                    print(f"Accounts Added: {stats.get('accounts_added', 0)}")
+                    print(f"Cards Added: {stats.get('cards_added', 0)}")
+                    print("-" * 30)
+
                 input("\nSimulation complete. Press Enter to continue...")
             except ValueError:
                 print(f"{RED}Invalid number.{RESET}")

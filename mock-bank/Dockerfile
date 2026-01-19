@@ -1,10 +1,4 @@
-FROM python:3.10-slim
-WORKDIR /app
-COPY requirements.txt .
-RUN pip install --no-cache-dir -r requirements.txt
-COPY . .
-EXPOSE 5000
-CMD ["python", "app.py"]# Use an official Python slim image for a smaller footprint
+# Use an official Python slim image for a smaller footprint
 FROM python:3.11-slim
 
 # Set the working directory inside the container

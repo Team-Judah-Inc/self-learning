@@ -1,7 +1,7 @@
 from functools import wraps
 import jwt
 from flask import request, jsonify, current_app
-from app.utils import load_table
+from app.repository import get_repository
 
 def check_auth(f):
     """
@@ -27,8 +27,8 @@ def check_auth(f):
             user_id = payload['user_id']
             
             # 3. Verify that the user exists in our data
-            users = load_table('users')
-            user = next((u for u in users if u['user_id'] == user_id), None)
+            repo = get_repository()
+            user = repo.get_user_by_id(user_id)
             
             if not user:
                 return jsonify({"error": "User invalid"}), 401

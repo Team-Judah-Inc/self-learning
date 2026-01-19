@@ -7,7 +7,7 @@ from .simulation import (
     process_manual_transaction,
     process_transfer
 )
-from .repository import JsonRepository
+from .repository import JsonRepository, SqlRepository
 from .config import DATA_DIR
 from .models import User, Account, Card
 
