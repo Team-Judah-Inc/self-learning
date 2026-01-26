@@ -12,7 +12,7 @@ sys.path.append(os.getcwd())
 try:
     from data_gen import (
         BankingSimulation, 
-        JsonRepository, 
+        SqlRepository,
         process_transfer, 
         process_manual_transaction,
         run_simulation_loop
@@ -24,7 +24,7 @@ except ImportError as e:
     sys.exit(1)
 
 # Config for test environment
-TEST_DIR = 'test_mock_data'
+TEST_DB_URI = 'sqlite:///test_banking.db'
 
 class TestBankingSimulation(unittest.TestCase):
 
@@ -34,14 +34,11 @@ class TestBankingSimulation(unittest.TestCase):
         Sets up a fresh BankingSimulation using a temporary directory.
         """
         # 1. Clean start
-        if os.path.exists(TEST_DIR):
-            try: shutil.rmtree(TEST_DIR)
-            except OSError: pass
-            
-        os.makedirs(TEST_DIR)
+        if os.path.exists('test_banking.db'):
+            os.remove('test_banking.db')
 
         # 2. Initialize System with Test Repo
-        self.repo = JsonRepository(TEST_DIR)
+        self.repo = SqlRepository(TEST_DB_URI)
         self.sim = BankingSimulation(self.repo)
         
         # 3. Load (creates default empty files in test dir)
@@ -52,11 +49,8 @@ class TestBankingSimulation(unittest.TestCase):
         Runs AFTER every test.
         Cleans up the temporary directory.
         """
-        if os.path.exists(TEST_DIR):
-            try:
-                shutil.rmtree(TEST_DIR)
-            except OSError as e:
-                print(f"Warning: Could not clean up test dir: {e}")
+        if os.path.exists('test_banking.db'):
+            os.remove('test_banking.db')
 
     # ==========================================
     # --- CORE RESOURCE TESTS ---
@@ -90,7 +84,9 @@ class TestBankingSimulation(unittest.TestCase):
         self.sim.save_world()
 
         # Create a NEW simulation instance and load from the same disk location
-        new_sim = BankingSimulation(self.repo)
+        # Re-initialize repo to simulate fresh load
+        new_repo = SqlRepository(TEST_DB_URI)
+        new_sim = BankingSimulation(new_repo)
         new_sim.load_world()
 
         self.assertEqual(len(new_sim.users), 1)
@@ -182,7 +178,8 @@ class TestBankingSimulation(unittest.TestCase):
         run_simulation_loop(self.sim, days=2, process_only=True)
         
         # 3. Check Date
-        self.assertEqual(self.sim.metadata['current_date'], "2023-01-16")
+        # Date now includes time, so we check if it starts with the expected date
+        self.assertTrue(self.sim.metadata['current_date'].startswith("2023-01-16"))
         
         # 4. Check Balance
         # Salary is 3000, split into 2 payments = 1500 per pay period

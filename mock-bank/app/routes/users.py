@@ -2,7 +2,8 @@ from flask import Blueprint, jsonify, request, current_app, abort
 import jwt
 import datetime
 from werkzeug.security import check_password_hash
-from app.utils import load_table, paginate
+from app.utils import paginate
+from app.repository import get_repository
 from app.auth import check_auth
 
 from app import limiter
@@ -43,8 +44,8 @@ def login():
     if not data: 
         return jsonify({"error": "Invalid body"}), 400
 
-    users = load_table('users')
-    user = next((u for u in users if u['username'] == data.get('username')), None)
+    repo = get_repository()
+    user = repo.get_user_by_username(data.get('username'))
     
     if user and check_password_hash(user['password_hash'], data.get('password')):
         token = jwt.encode({
@@ -126,16 +127,35 @@ def get_user_accounts(current_user, user_id):
     if current_user['user_id'] != user_id: 
         return jsonify({"error": "Access Denied"}), 403
     
-    all_accounts = load_table('accounts')
-    my_accounts = [a for a in all_accounts if a['user_id'] == user_id]
+    repo = get_repository()
     
-    # Filters
-    if request.args.get('type'):
-        my_accounts = [a for a in my_accounts if a['type'] == request.args.get('type')]
-    if request.args.get('currency'):
-        my_accounts = [a for a in my_accounts if a['currency'] == request.args.get('currency')]
-
-    # Pagination
-    paginated_accounts, meta = paginate(my_accounts)
+    # Pagination Params
+    try:
+        limit = int(request.args.get('limit', current_app.config['DEFAULT_PAGE_SIZE']))
+        page = int(request.args.get('page', 1))
+    except ValueError:
+        limit = current_app.config['DEFAULT_PAGE_SIZE']
+        page = 1
         
-    return jsonify({"meta": meta, "accounts": paginated_accounts})
+    max_limit = current_app.config['MAX_PAGE_SIZE']
+    limit = max(1, min(limit, max_limit))
+    page = max(1, page)
+    offset = (page - 1) * limit
+
+    # Fetch Filtered Data
+    accounts = repo.get_accounts_by_user_filtered(
+        user_id,
+        type=request.args.get('type'),
+        currency=request.args.get('currency'),
+        limit=limit,
+        offset=offset
+    )
+    
+    meta = {
+        "page": page,
+        "limit": limit,
+        "has_next": len(accounts) == limit,
+        "has_prev": page > 1
+    }
+        
+    return jsonify({"meta": meta, "accounts": accounts})

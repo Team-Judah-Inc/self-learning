@@ -8,7 +8,7 @@ DEFAULT_CONFIG = {
         "home_location_chance": 0.90,
         "categories": {
             "Food & Dining": 0.30, "Shopping": 0.20, "Transport": 0.15,
-            "Entertainment": 0.10, "Health & Wellness": 0.10, "Travel": 0.05, "Utilities": 0.10
+            "Entertainment": 0.10, "Health & Wellness": 0.10, "Other": 0.05, "Utilities": 0.10
         }
     },
     "financial": {
@@ -21,9 +21,11 @@ DEFAULT_CONFIG = {
     },
     "behavior": {
         "spending_profiles": {
-            "FRUGAL":  {"prob": 0.1, "mean": 15.00,  "std": 5.00,  "min": 2.00,  "max": 60.00},
-            "AVERAGE": {"prob": 0.4, "mean": 45.00,  "std": 20.00, "min": 5.00,  "max": 200.00},
-            "SPENDER": {"prob": 0.7, "mean": 120.00, "std": 80.00, "min": 10.00, "max": 800.00}
+            # Probabilities are now PER HOUR (0.0 - 1.0)
+            # e.g., 0.05 = 5% chance per hour to make a transaction
+            "FRUGAL":  {"prob": 0.01, "mean": 15.00,  "std": 5.00,  "min": 2.00,  "max": 60.00},
+            "AVERAGE": {"prob": 0.05, "mean": 45.00,  "std": 20.00, "min": 5.00,  "max": 200.00},
+            "SPENDER": {"prob": 0.15, "mean": 120.00, "std": 80.00, "min": 10.00, "max": 800.00}
         }
     }
 }

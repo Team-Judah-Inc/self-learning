@@ -1,22 +1,5 @@
-import json
-import os
 import datetime
 from flask import request, current_app
-
-def load_table(name):
-    """
-    Loads a JSON file from the data directory defined in config.
-    Returns an empty list if the file does not exist.
-    """
-    path = os.path.join(current_app.config['DATA_DIR'], f"{name}.json")
-    if not os.path.exists(path):
-        return []
-    
-    with open(path, 'r') as f:
-        try:
-            return json.load(f)
-        except json.JSONDecodeError:
-            return []
 
 def parse_date(date_str):
     """

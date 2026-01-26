@@ -1,5 +1,6 @@
 from flask import Blueprint, jsonify, request, current_app, abort
-from app.utils import load_table, paginate
+from app.utils import paginate
+from app.repository import get_repository
 from app.auth import check_auth
 from app import limiter
 
@@ -26,8 +27,8 @@ def get_account_details(current_user, account_id):
       404:
         description: Account not found
     """
-    accounts = load_table('accounts')
-    account = next((a for a in accounts if a['account_id'] == account_id), None)
+    repo = get_repository()
+    account = repo.get_account_by_id(account_id)
     
     if not account:
         abort(404)
@@ -75,37 +76,50 @@ def get_account_transactions(current_user, account_id):
         description: Access Denied
     """
     # Security: Verify account ownership
-    accounts = load_table('accounts')
-    account = next((a for a in accounts if a['account_id'] == account_id), None)
+    repo = get_repository()
+    account = repo.get_account_by_id(account_id)
     
     if not account or account['user_id'] != current_user['user_id']:
         return jsonify({"error": "Access Denied"}), 403
     
-    # Data & Filtering
-    all_txns = load_table('transactions')
-    account_txns = [t for t in all_txns if t['account_id'] == account_id]
-    
-    # Category Filter
-    category = request.args.get('category')
-    if category:
-        account_txns = [t for t in account_txns if t.get('category') == category]
+    # Pagination Params
+    try:
+        limit = int(request.args.get('limit', current_app.config['DEFAULT_PAGE_SIZE']))
+        page = int(request.args.get('page', 1))
+    except ValueError:
+        limit = current_app.config['DEFAULT_PAGE_SIZE']
+        page = 1
+        
+    max_limit = current_app.config['MAX_PAGE_SIZE']
+    limit = max(1, min(limit, max_limit))
+    page = max(1, page)
+    offset = (page - 1) * limit
 
-    # Search Filter
-    search_term = request.args.get('search')
-    if search_term:
-        account_txns = [t for t in account_txns if search_term.lower() in t['description'].lower()]
+    # Fetch Filtered Data
+    transactions = repo.get_transactions_by_account_filtered(
+        account_id,
+        category=request.args.get('category'),
+        search=request.args.get('search'),
+        sort=request.args.get('sort', 'desc'),
+        limit=limit,
+        offset=offset
+    )
     
-    # Sorting
-    is_asc = request.args.get('sort') == 'asc'
-    account_txns.sort(key=lambda x: x['date'], reverse=not is_asc)
+    # Note: Total count for metadata would require a separate COUNT query.
+    # For now, we simplify metadata or would need to add a count method to repo.
+    # Let's provide basic meta based on current page.
     
-    # Pagination
-    paginated_txns, meta = paginate(account_txns)
+    meta = {
+        "page": page,
+        "limit": limit,
+        "has_next": len(transactions) == limit, # Approximate check
+        "has_prev": page > 1
+    }
     
     return jsonify({
         "account_id": account_id,
         "meta": meta,
-        "transactions": paginated_txns
+        "transactions": transactions
     })
 
 @accounts_bp.route('/accounts/<account_id>/cards', methods=['GET'])
@@ -131,14 +145,13 @@ def get_account_cards(current_user, account_id):
       403:
         description: Access Denied
     """
-    accounts = load_table('accounts')
-    account = next((a for a in accounts if a['account_id'] == account_id), None)
+    repo = get_repository()
+    account = repo.get_account_by_id(account_id)
     
     if not account or account['user_id'] != current_user['user_id']:
         return jsonify({"error": "Access Denied"}), 403
         
-    all_cards = load_table('cards')
-    my_cards = [c for c in all_cards if c['account_id'] == account_id]
+    my_cards = repo.get_cards_by_account(account_id)
     
     status_filter = request.args.get('status')
     if status_filter:
@@ -170,15 +183,25 @@ def get_transaction_receipt(current_user, transaction_id):
       404:
         description: Transaction not found
     """
-    transactions = load_table('transactions')
-    txn = next((t for t in transactions if t['transaction_id'] == transaction_id), None)
+    repo = get_repository()
+    txn = repo.get_transaction_by_id(transaction_id)
     
     if not txn:
         abort(404)
     
     # Security: Verify ownership via account
-    accounts = load_table('accounts')
-    account = next((a for a in accounts if a['account_id'] == txn['account_id']), None)
+    # Note: Card transactions might need card lookup first, but for now assuming account_id is present or linked
+    # If txn is card txn, it has card_id. We need to find account from card.
+    
+    account_id = txn.get('account_id')
+    if not account_id and txn.get('card_id'):
+        card = repo.get_card_by_id(txn['card_id'])
+        if card: account_id = card['account_id']
+
+    if not account_id:
+         return jsonify({"error": "Transaction orphan"}), 404
+
+    account = repo.get_account_by_id(account_id)
     
     if not account or account['user_id'] != current_user['user_id']:
         return jsonify({"error": "Access Denied"}), 403
