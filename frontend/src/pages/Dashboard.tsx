@@ -2,8 +2,8 @@ import { useEffect, useState } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { mockApi } from '../services/mockApi';
 import type { User, Account, Transaction } from '../types';
-import AccountCard from '../components/AccountCard';
-import TransactionList from '../components/TransactionList';
+// import AccountCard from '../components/AccountCard';
+// import TransactionList from '../components/TransactionList';
 import './Dashboard.css';
 
 export default function Dashboard() {

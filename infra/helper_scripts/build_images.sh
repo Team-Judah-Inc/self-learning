@@ -1,2 +1,1 @@
-docker buildx build ../../backend -t backendimage:1.0.2
-minikube image load backendimage:1.0.2
+docker buildx build /Users/tzichlinsky/dev/self-learning/frontend  -t ui-pod:1.0.0 && minikube image load ui-pod:1.0.0

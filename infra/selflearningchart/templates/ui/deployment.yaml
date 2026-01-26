@@ -1,18 +1,20 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: ui-three
+  name: ui-deployment
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: ui-three
+      app: ui-deployment
   template:
     metadata:
       labels:
-        app: ui-three
+        app: ui-deployment
     spec:
       containers:
       - name: ui
-        image: nginx
+        image: ui-pod:1.0.0
         imagePullPolicy: {{ .Values.imagePullPolicy }}
+        ports:
+        - containerPort: 8080
