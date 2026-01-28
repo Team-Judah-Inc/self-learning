@@ -32,8 +32,11 @@ COPY --from=builder /app/seed .
 # Create directory for SQLite database
 RUN mkdir -p data
 
+ARG PORT=8080
+ENV PORT=${PORT}
+
 # Expose the port
-EXPOSE 8080
+EXPOSE ${PORT}
 
 # Run the executable
 CMD ["./server"]

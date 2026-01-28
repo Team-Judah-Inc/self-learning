@@ -3,10 +3,10 @@ kind: Service
 metadata:
   name: ui-service
 spec:
-  type: {{ .Values.uiServiceType }}
+  type: {{ .Values.frontend.serviceType }}
   selector:
     app: ui-deployment
   ports:
-    - port: 8080
-      targetPort: 8080
-      nodePort: 30000
+    - port: {{ .Values.frontend.externalPort}}
+      targetPort: {{ .Values.frontend.internalPort}}
+      nodePort: {{ .Values.frontend.nodePort}}
