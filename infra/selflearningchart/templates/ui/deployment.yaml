@@ -16,5 +16,8 @@ spec:
       - name: ui
         image: ui-pod:1.0.0
         imagePullPolicy: {{ .Values.imagePullPolicy }}
+        env:
+        - name: BACKEND_URL
+          value: "http://{{ .Release.Name }}-backend:{{ .Values.backend.externalPort }}"
         ports:
         - containerPort: 8080
