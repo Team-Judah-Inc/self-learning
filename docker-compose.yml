@@ -12,3 +12,19 @@ services:
       - ENVIRONMENT=development
       - DATABASE_PATH=data/riseapp.db
     restart: unless-stopped
+
+  mock-bank:
+    build:
+      context: ./mock-bank
+      dockerfile: Dockerfile
+    ports:
+      - "5000:5000"
+    volumes:
+      - ./mock-bank/mock_data:/app/mock_data
+    environment:
+      - FLASK_APP=run.py
+      - FLASK_DEBUG=1
+      - DATA_DIR=mock_data
+      - DB_TYPE=sqlite
+      - SIMULATION_INTERVAL_SECONDS=30 # Run every 30 seconds and advance 30 seconds
+    restart: unless-stopped

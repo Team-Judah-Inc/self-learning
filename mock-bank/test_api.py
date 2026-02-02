@@ -62,9 +62,8 @@ class TestBankingAPI(unittest.TestCase):
         self.client = self.app.test_client()
         
         # Reset singleton for tests
-        from app.repository import _repo_instance
-        import app.repository
-        app.repository._repo_instance = None
+        from app.repository import reset_repository
+        reset_repository()
 
     def tearDown(self):
         """Cleanup after tests."""

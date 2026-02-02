@@ -30,5 +30,8 @@ RUN mkdir -p mock_data
 # Expose the port Flask runs on
 EXPOSE 5000
 
+# Make the start script executable
+RUN chmod +x start.sh
+
 # Command to run the application
-CMD ["python", "run.py"]
+CMD ["./start.sh"]
