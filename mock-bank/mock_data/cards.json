@@ -7,7 +7,7 @@
     "limit": 5000,
     "billing_day": 15,
     "spending_profile": "AVERAGE",
-    "current_spend": 113.95,
+    "current_spend": 159.64,
     "issue_date": "2026-01-19",
     "expiry_date": "2029-01-18",
     "last_bill_date": "2026-02-15"
@@ -20,7 +20,7 @@
     "limit": 5000,
     "billing_day": 10,
     "spending_profile": "SPENDER",
-    "current_spend": 699.1200000000001,
+    "current_spend": 709.1200000000001,
     "issue_date": "2026-01-19",
     "expiry_date": "2029-01-18",
     "last_bill_date": "2026-02-10"
@@ -33,7 +33,7 @@
     "limit": 5000,
     "billing_day": 10,
     "spending_profile": "SPENDER",
-    "current_spend": 829.79,
+    "current_spend": 909.76,
     "issue_date": "2026-01-19",
     "expiry_date": "2029-01-18",
     "last_bill_date": "2026-02-10"
@@ -59,7 +59,7 @@
     "limit": 5000,
     "billing_day": 15,
     "spending_profile": "AVERAGE",
-    "current_spend": 51.260000000000005,
+    "current_spend": 73.9,
     "issue_date": "2026-01-19",
     "expiry_date": "2029-01-18",
     "last_bill_date": "2026-02-15"

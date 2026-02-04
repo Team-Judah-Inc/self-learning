@@ -1,7 +1,0 @@
-version: '3.8'
-services:
-  mock-bank:
-    build: .
-    ports: ["5000:5000"]
-    volumes: ["./mock_data:/app/mock_data"]
-    env_file: [".env"]

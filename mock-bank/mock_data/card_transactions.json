@@ -748,5 +748,45 @@
     "category": "Entertainment",
     "location": "Wellsshire",
     "type": "DEBIT"
+  },
+  {
+    "transaction_id": "ctxn_78",
+    "card_id": "card_3",
+    "amount": -45.69,
+    "date": "2026-02-18T01:00:00",
+    "description": "Oconnor-Wilkins",
+    "category": "Health & Wellness",
+    "location": "North Danielleburgh",
+    "type": "DEBIT"
+  },
+  {
+    "transaction_id": "ctxn_79",
+    "card_id": "card_4",
+    "amount": -10.0,
+    "date": "2026-02-18T01:00:00",
+    "description": "Wyatt-Huynh",
+    "category": "Utilities",
+    "location": "Hernandezton",
+    "type": "DEBIT"
+  },
+  {
+    "transaction_id": "ctxn_80",
+    "card_id": "card_7",
+    "amount": -22.64,
+    "date": "2026-02-18T01:00:00",
+    "description": "Knight-Martin",
+    "category": "Food & Dining",
+    "location": "Wellsshire",
+    "type": "DEBIT"
+  },
+  {
+    "transaction_id": "ctxn_81",
+    "card_id": "card_5",
+    "amount": -79.97,
+    "date": "2026-02-18T02:00:00",
+    "description": "Oconnor-Wilkins",
+    "category": "Food & Dining",
+    "location": "Melissaborough",
+    "type": "DEBIT"
   }
 ]
