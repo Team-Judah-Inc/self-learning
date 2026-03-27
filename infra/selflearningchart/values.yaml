@@ -1,3 +1,25 @@
-uiServiceType: NodePort
 imagePullPolicy: IfNotPresent
 backendreplicacount: 1
+
+backend:
+  internalPort: 8080
+  externalPort: 8081
+  serviceType: NodePort
+frontend:
+  internalPort: 8080
+  externalPort: 8080  
+  nodePort: 30000
+  serviceType: NodePort
+
+
+# PostgreSQL Configuration
+postgresql:
+  enabled: true
+  auth:
+    username: myuser
+    password: mypassword
+    database: mydatabase
+  primary:
+    persistence:
+      enabled: true
+      size: 1Gi

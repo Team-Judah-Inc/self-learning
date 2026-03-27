@@ -27,8 +27,11 @@ COPY --from=builder /app/dist /usr/share/nginx/html
 # Copy custom nginx config
 COPY nginx.conf /etc/nginx/conf.d/default.conf
 
+ARG PORT=8080
+RUN sed -i "s/8080/${PORT}/g" /etc/nginx/conf.d/default.conf
+
 # Expose port 8080
-EXPOSE 8080
+EXPOSE ${PORT}
 
 # Start Nginx
 CMD ["nginx", "-g", "daemon off;"]
