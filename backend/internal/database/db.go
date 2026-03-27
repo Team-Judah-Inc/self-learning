@@ -38,6 +38,7 @@ func Connect(dbName string) *gorm.DB {
 	// 4. Auto Migrate
 	log.Println("Running Database Migrations...")
 	err = db.AutoMigrate(
+		&models.User{},
 		&models.Account{},
 		&models.Transaction{},
 	)
